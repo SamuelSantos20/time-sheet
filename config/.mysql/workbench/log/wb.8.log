@@ -1,0 +1,34 @@
+21:33:21 [INF][   WBContext UI]: Initializing workbench context UI with these values:
+	base dir: /usr/share/mysql-workbench
+	plugin path: /usr/lib/mysql-workbench/plugins
+	struct path: /usr/share/mysql-workbench/grt
+	module path: /usr/lib/mysql-workbench/modules
+	library path: /usr/share/mysql-workbench/libraries
+	user data dir: /config/.mysql/workbench
+	open at start: 
+	open type: 
+	run at startup: 
+	run type: 
+	Force SW rendering: No
+	Force OpenGL: No
+	quit when done: No
+21:33:21 [INF][      WBContext]: WbContext::init
+21:33:27 [INF][            WBA]: Looking for extension modules for WBA...
+21:33:27 [INF][            WBA]: 0 extension modules found
+21:33:28 [WRN][            grt]: Duplicate plugin name wb.tools.cmdlineClient	There is more than one plugin with the name wb.tools.cmdlineClient (in PyWbUtils and PyWbUtils).
+21:33:28 [WRN][            grt]: /config/.mysql/workbench/connections.xml:25: link '2a7b6d12-d84d-11ef-94bd-0242ac150002' <object GrtObject> key=owner could not be resolved
+21:33:28 [WRN][            grt]: Duplicate plugin name wb.tools.cmdlineClient	There is more than one plugin with the name wb.tools.cmdlineClient (in PyWbUtils and PyWbUtils).
+21:33:28 [INF][      WBContext]: System info:
+ 	MySQL Workbench Community (GPL) for Linux/Unix version 8.0.41 CE build 4802116 (64 bit)
+	Configuration Directory: /config/.mysql/workbench
+	Data Directory: /usr/share/mysql-workbench
+	Cairo Version: 1.18.0
+	OS:  x86_64
+	CPU: 4x Intel(R) Core(TM) i3-3220 CPU @ 3.30GHz (3292.531MHz) - 3.77GiB RAM
+No video adapter info available
+	Distribution: Ubuntu 24.04.1 LTS
+
+	Fips mode enabled: no
+
+21:33:29 [INF][    WQE backend]: Found auto-save workspace /config/.mysql/workbench/sql_workspaces/time-sheet-bd-desenvolvimento-1.autosave
+21:33:29 [WRN][       WBModule]: OS not found on supported OS list. OS string: ' x86_64'
