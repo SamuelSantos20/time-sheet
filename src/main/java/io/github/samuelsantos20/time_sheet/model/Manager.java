@@ -13,13 +13,13 @@ import java.util.UUID;
 public class Manager {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "managerId")
+    @Column(name = "manager_id")
     private UUID managerId;
 
-    @Column(name = "firstName", nullable = false, unique = false, updatable = true,length = 100)
+    @Column(name = "first_name", nullable = false, unique = false, updatable = true,length = 100)
     private String firstName;
 
-    @Column(name = "lastName", length = 100, nullable = false, updatable = true, unique = false)
+    @Column(name = "last_name", length = 100, nullable = false, updatable = true, unique = false)
     private String lastName;
 
     @Column(name = "email", length = 200, unique = true, nullable = false, updatable = true)

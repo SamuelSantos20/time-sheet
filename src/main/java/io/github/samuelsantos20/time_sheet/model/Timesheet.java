@@ -20,7 +20,7 @@ import java.util.UUID;
 public class Timesheet {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "timesheetId")
+    @Column(name = "timesheet_id")
     private UUID timesheetId;
 
     @ManyToOne
@@ -34,13 +34,13 @@ public class Timesheet {
     @JoinColumn(name = "approval")
     private Approval approval;
 
-    @Column(name = "month")
+    @Column(name = "timesheet_month")
     private int month;
 
-    @Column(name = "year")
+    @Column(name = "timesheet_year")
     private int year;
 
-    @Column(name ="timeSheetUpdate")
+    @Column(name =" time_sheet_update")
     @LastModifiedDate
     private LocalDateTime timeSheetUpdate;
 
@@ -48,7 +48,7 @@ public class Timesheet {
     @Column(name = "time_sheet_created")
     private LocalDateTime timeSheetCreated;
 
-    @Column(name = "totalHours", nullable = false, updatable = true, unique = false)
+    @Column(name = "total_hours", nullable = false, updatable = true, unique = false)
     private LocalTime totalHours;
 
 

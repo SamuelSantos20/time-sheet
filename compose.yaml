@@ -16,7 +16,7 @@ services:
       - time-sheet-network
     restart: unless-stopped
 
-  postgres-database:   
+  postgres-database:
     image: postgres:latest
     container_name: postgres-database
     env_file:
@@ -31,34 +31,26 @@ services:
       - time-sheet-network
     restart: unless-stopped
 
-
-  # Spring Boot Application
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: time-sheet-spring
-    container_name: spring-time-sheet
-    command: mvn test
-
-    environment:
-      - SPRING_DATASOURCE_URL
-      - SPRING_DATASOURCE_USERNAME
-      - SPRING_DATASOURCE_PASSWORD
-      - SPRING_DATASOURCE_DRIVER_CLASS_NAME
-      - SPRING_JPA_HIBERNATE_DDL_AUTO
-      - SPRING_JPA_DATABASE_PLATFORM
-      - SPRING_JPA_SHOW_SQL
-      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL
-      - LOGGING_LEVEL_ROOT
-      - LOGGING_FILE_NAME
-    ports:
-      - "9090:8080"
-    volumes:
-      - ./logs:/logs
-    networks:
-      - time-sheet-network
+#
+#  # Spring Boot Application
+#  app:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    image: time-sheet-spring
+#    container_name: spring-time-sheet
+#    command: mvn test
+#
+#    env_file:
+#      - .env
+#
+#    ports:
+#      - "9090:8080"
+#    volumes:
+#      - ./logs:/logs
+#    networks:
+#      - time-sheet-network
 
 networks:
-  time-sheet-network:
-    driver: bridge
+ time-sheet-network:
+   driver: bridge

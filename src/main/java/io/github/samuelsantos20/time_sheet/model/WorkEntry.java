@@ -13,27 +13,27 @@ import java.util.UUID;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = "workEntry")
+@Table(name = "work_entry")
 @EntityListeners(AuditingEntityListener.class)
 public class WorkEntry {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "workEntryId")
+    @Column(name = "work_entry_id")
     private UUID workEntryId;
 
     @ManyToOne
-    @JoinColumn(name = "timesheetId")
+    @JoinColumn(name = "timesheet_id")
     private Timesheet timesheetId;
 
     @ManyToOne
-    @JoinColumn(name = "employeeId")
+    @JoinColumn(name = "employee_id")
     private Employee employeeId;
 
     @Column(name = "start_time", unique = false, updatable = true)
     private LocalDateTime startTime;
 
-    @Column(name = "endTime", unique = false, updatable = true)
+    @Column(name = "end_time", unique = false, updatable = true)
     private LocalDateTime endTime;
 
     @Column(name = "date_created")

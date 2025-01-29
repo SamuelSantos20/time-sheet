@@ -16,16 +16,16 @@ import java.util.UUID;
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "employeeId")
+    @Column(name = "employee_id")
     private UUID id;
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.PERSIST)
     private List<Timesheet> timesheets;
 
-    @Column(name = "firstName", length = 100, nullable = false, updatable = true, unique = false)
+    @Column(name = "first_name", length = 100, nullable = false, updatable = true, unique = false)
     private String firstName;
 
-    @Column(name = "lastName", length = 100, nullable = false, updatable = true, unique = false)
+    @Column(name = "last_name", length = 100, nullable = false, updatable = true, unique = false)
     private String lastName;
 
     @Column(name = "email", length = 200, nullable = false, updatable = true, unique = true)

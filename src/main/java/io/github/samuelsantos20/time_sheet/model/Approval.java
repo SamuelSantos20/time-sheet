@@ -18,7 +18,7 @@ import java.util.UUID;
 public class Approval {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "approvalId")
+    @Column(name = "approval_id")
     private UUID approvalId;
 
     @ManyToOne
@@ -29,14 +29,14 @@ public class Approval {
     @JoinColumn(name = "timesheet", nullable = false, unique = true)
     private Timesheet timesheet;
 
-    @Column(name = "approvalStatus", nullable = false, length = 200, updatable = true, unique = false)
+    @Column(name = "approval_status", nullable = false, length = 200, updatable = true, unique = false)
     private ApprovalStatus approvalStatus;
 
-    @Column(name = "approvalDateCreated")
+    @Column(name = "approval_date_created")
     @CreatedDate
     private LocalDateTime approvalDateCreated;
 
-    @Column(name = "approvalDateUpdate")
+    @Column(name = "approval_date_update")
     @LastModifiedDate
     private LocalDateTime approvalDateUpdate;
 
