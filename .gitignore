@@ -33,5 +33,13 @@ build/
 .vscode/
 
 ### ENV ###
-.env
 create.sql
+
+# Ignorar pastas do PostgreSQL e pgAdmin
+pgadmin-data/
+pgdata/
+
+# Outros arquivos/pastas a serem ignorados
+*.log
+node_modules/
+.env
