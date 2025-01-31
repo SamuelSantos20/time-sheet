@@ -9,7 +9,7 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=admin
       - TZ=America/Sao_Paulo # Fuso horário local
     ports:
-      - '5050:80' # Porta para acessar o pgAdmin no navegador
+      - '5058:80' # Porta para acessar o pgAdmin no navegador
     volumes:
       - ./pgadmin-data:/var/lib/pgadmin # Persistência de dados do Workbench
     networks:

@@ -54,50 +54,43 @@ public class EntryAndExitRecord {
 
 
     public void Exit(Employee employee_id) {
+        log.info("Registrando saída para o funcionário: {}", employee_id);
 
         LocalDate exitNow = LocalDate.now();
-
         Optional<WorkEntry> exitOptional = workEntryService.searchByCurrentDayAndUserID(exitNow, employee_id);
 
         exitOptional.ifPresentOrElse(workEntry -> {
+            try {
+                LocalDateTime exitTimeNow = LocalDateTime.now();
+                workEntry.setEndTime(exitTimeNow);
+                WorkEntry exit = workEntryService.workEntryUpdate(workEntry);
 
-            LocalDateTime exitTimeNow = LocalDateTime.now();
+                Duration duration = Duration.between(exit.getStartTime(), exit.getEndTime());
+                int totHour = (int) duration.toHours();
+                int totMinute = (int) (duration.toMinutes() % 60);
 
-            workEntry.setEndTime(exitTimeNow);
+                log.info("Tempo trabalhado: {} horas e {} minutos", totHour, totMinute);
 
-            WorkEntry exit = workEntryService.workEntryUpdate(workEntry);
+                if (totHour > 10) {
+                    log.warn("Horas extras detectadas: {} horas e {} minutos", totHour, totMinute);
+                    // Considere armazenar horas extras em um campo separado.
+                }
 
+                Timesheet timesheet = new Timesheet();
+                Duration totalWorkedTime = Duration.ofHours(totHour).plusMinutes(totMinute);
+                timesheet.setTotalHours(totalWorkedTime);
+                timesheet.setEmployee(exit.getEmployeeId());
 
-            Duration duration = Duration.between(exit.getStartTime(), exit.getEndTime());
-
-            int totHour = (int) duration.toHours();
-
-            int totMinute = (int) (duration.toMinutes() % 60);
-
-            if (totHour > 10) {
-
-                totHour = -totHour;
-
-                totMinute = -totMinute;
-
+                timesheetTimesheetProcess.process(timesheet);
+            } catch (Exception e) {
+                log.error("Erro ao processar saída: {}", e.getMessage(), e);
             }
-
-            Timesheet timesheet = new Timesheet();
-            LocalTime totalWorkedTime = LocalTime.of(totHour, totMinute);
-
-            timesheet.setTotalHours(totalWorkedTime);
-            timesheet.setEmployee(exit.getEmployeeId());
-
-            timesheetTimesheetProcess.process(timesheet);
-
         }, () -> {
             log.info("Entrada ainda não marcada na data atual.");
             Entry(employee_id);
-
         });
-
-
     }
+
 
     /**
      * 0: Segundo (0 segundo).
@@ -106,41 +99,36 @@ public class EntryAndExitRecord {
      * *: Todos os dias do mês.
      * *: Todos os meses.
      */
-    @Scheduled(cron = "0 0 23 * * ?")// Executa todos os dias às 23:00 (11 PM)
-    private void Teste() {
-
-
+    @Scheduled(cron = "0 0 23 * * ?") // Executa todos os dias às 23:00 (11 PM)
+    private void ajustarHorasTrabalhadas() {
         log.info("Tarefa agendada executada às 23:00 para ajustar horas trabalhadas.");
 
-
         LocalDate localDate = LocalDate.now();
-
-        log.info("Executando tarefa agenda para:  {}", localDate);
+        log.info("Executando tarefa agendada para: {}", localDate);
 
         List<WorkEntry> workEntries = workEntryService.findByStart_timeAndExit_time(localDate);
-
         log.info("Total de registros para serem analisados: {}", workEntries.size());
 
         workEntries.forEach(workEntry -> {
-
             if (Objects.isNull(workEntry.getStartTime()) || Objects.isNull(workEntry.getEndTime())) {
-
                 LocalDateTime now = LocalDateTime.now();
 
                 timesheetData.ListFindByMonthAndEmployee(now.getMonth().getValue(), now.getYear(), workEntry.getEmployeeId()).forEach(timesheet -> {
+                    try {
+                        if (timesheet.getTotalHours().toHours() >= 9) {
+                            Duration newTotalHours = timesheet.getTotalHours().minusHours(9);
+                            timesheet.setTotalHours(newTotalHours);
 
-                    LocalTime time = timesheet.getTotalHours().minusHours(9).plusMinutes(0);
-
-
-                    timesheet.setTotalHours(time);
-
-                    timesheetData.save(timesheet);
+                            Timesheet save = timesheetData.save(timesheet);
+                            log.info("Resultado da função de acompanhamento do work_entry: {}", save);
+                        } else {
+                            log.warn("Total de horas menor que 9 para o Timesheet: {}", timesheet);
+                        }
+                    } catch (Exception e) {
+                        log.error("Erro ao processar o Timesheet: {}", e.getMessage(), e);
+                    }
                 });
-
             }
-
         });
-
     }
-
 }

@@ -4,8 +4,10 @@ import io.github.samuelsantos20.time_sheet.exception.OperationNotPermitted;
 import io.github.samuelsantos20.time_sheet.model.Timesheet;
 import io.github.samuelsantos20.time_sheet.service.TimesheetService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.YearMonth;
@@ -13,23 +15,22 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class TimesheetProcess {
 
     private final TimesheetService timesheetService;
 
     public void process(Timesheet timesheet) {
-
+        log.info("Processando Timesheet para o funcionário: {}", timesheet.getEmployee());
+        log.info("Mês/Ano do Timesheet: {}/{}", timesheet.getMonth(), timesheet.getYear());
 
         LocalDateTime localDateNow = LocalDateTime.now();
-
         YearMonth yearMonth = YearMonth.of(timesheet.getYear(), timesheet.getMonth());
-
         YearMonth newer = YearMonth.from(localDateNow);
 
         if (yearMonth.isBefore(newer)) {
-
-            throw new OperationNotPermitted("Não é possivel relizar está operação!");
-
+            log.warn("Operação não permitida: Timesheet para mês/ano anterior.");
+            throw new OperationNotPermitted("Não é possível realizar esta operação!");
         }
 
         Optional<Timesheet> optionalTimesheet = timesheetService.timesheetSearchMonthAndEmployee_id(
@@ -38,18 +39,23 @@ public class TimesheetProcess {
                 timesheet.getEmployee());
 
         optionalTimesheet.ifPresentOrElse(timesheet1 -> {
-            Timesheet existingTimesheet = optionalTimesheet.get();
+            try {
+                Timesheet existingTimesheet = optionalTimesheet.get();
+                Duration totalWorkedTime = existingTimesheet.getTotalHours().plus(timesheet.getTotalHours());
+                existingTimesheet.setTotalHours(totalWorkedTime);
 
-            LocalTime timesheetParse = existingTimesheet.getTotalHours().plusHours(timesheet.getTotalHours().getHour()).plusMinutes(timesheet.getTotalHours().getMinute());
-
-            existingTimesheet.setTotalHours(timesheetParse);
-
-            timesheetService.timesheetSave(existingTimesheet);
-        }, ()->{
-
-            timesheetService.timesheetSave(timesheet);
-
+                timesheetService.timesheetSave(existingTimesheet);
+                log.info("Timesheet atualizado com sucesso: {}", existingTimesheet);
+            } catch (Exception e) {
+                log.error("Erro ao atualizar Timesheet: {}", e.getMessage(), e);
+            }
+        }, () -> {
+            try {
+                timesheetService.timesheetSave(timesheet);
+                log.info("Novo Timesheet salvo com sucesso: {}", timesheet);
+            } catch (Exception e) {
+                log.error("Erro ao salvar novo Timesheet: {}", e.getMessage(), e);
+            }
         });
     }
-
 }

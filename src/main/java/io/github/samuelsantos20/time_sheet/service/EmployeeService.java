@@ -20,11 +20,11 @@ public class EmployeeService {
 
     private final EmployeeValidation employeeValidation;
 
-    public void employeeSave(Employee employee) {
+    public Employee employeeSave(Employee employee) {
 
         employeeValidation.validation(employee);
 
-        employeeData.save(employee);
+        return employeeData.save(employee);
 
     }
 
@@ -52,9 +52,9 @@ public class EmployeeService {
 
     }
 
-    public void employeeDelete(UUID id) {
+    public void employeeDelete(Employee employee) {
 
-        employeeData.deleteById(id);
+        employeeData.delete(employee);
 
     }
 

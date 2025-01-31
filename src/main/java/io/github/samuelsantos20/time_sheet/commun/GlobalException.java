@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpServerErrorException.InternalServerError;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,5 +48,16 @@ public class GlobalException {
 
         return ErrorResponse.conflict(e.getMessage());
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse UnexpectedOperation(RuntimeException e) {
+
+        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Ocorreu um erro inesperado, entre em contato com o suporte para maiores informaçãoes!", List.of());
+
+    }
+
+
+
 
 }
