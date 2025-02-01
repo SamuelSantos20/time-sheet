@@ -28,7 +28,7 @@ public class User {
     @Column(name = "registration", length = 7, updatable = false, unique = false, nullable = false)
     private String registration;
 
-    @Column(name = "employee_or_manager_id", unique = false, nullable = false, updatable = false,)
+    @Column(name = "employee_or_manager_id", unique = false, nullable = false, updatable = false)
     private UUID user_id;
 
     

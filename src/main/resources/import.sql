@@ -11,3 +11,10 @@ INSERT INTO work_entry (work_entry_id, timesheet_id, employee_id, start_time, en
 
 -- Corrected INSERT statement for approval
 INSERT INTO approval (approval_id, timesheet, manager, approval_status, approval_date_created, approval_date_update, comments)  VALUES  ('923e4567-e89b-12d3-a456-426614174008', '523e4567-e89b-12d3-a456-426614174004', '323e4567-e89b-12d3-a456-426614174002', 1, '2025-01-08 10:00:00', '2025-01-08 10:30:00', 'Approved successfully.'), ('a23e4567-e89b-12d3-a456-426614174009', '623e4567-e89b-12d3-a456-426614174005', '423e4567-e89b-12d3-a456-426614174003', 2, '2025-01-08 11:00:00', '2025-01-08 11:30:00', 'Requires adjustments.');
+
+-- Inserir dados na tabela "User"
+INSERT INTO "user" (id, password, registration, employee_or_manager_id) VALUES
+    ('b23e4567-e89b-12d3-a456-426614174010', 'pass1234', 'REG123', '123e4567-e89b-12d3-a456-426614174000'), -- User associado ao employee John Doe
+    ('c23e4567-e89b-12d3-a456-426614174011', 'pass5678', 'REG456', '223e4567-e89b-12d3-a456-426614174001'), -- User associado ao employee Jane Smith
+    ('d23e4567-e89b-12d3-a456-426614174012', 'pass9101', 'REG789', '323e4567-e89b-12d3-a456-426614174002'), -- User associado ao manager Alice Johnson
+    ('e23e4567-e89b-12d3-a456-426614174013', 'pass1121', 'REG101', '423e4567-e89b-12d3-a456-426614174003'); -- User associado ao manager Bob Brown
