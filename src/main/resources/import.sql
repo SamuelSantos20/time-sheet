@@ -1,5 +1,5 @@
 -- Inserir dados na tabela "employee"
-INSERT INTO employee (employee_id, registration, first_name, last_name, department, email, position) VALUES ('123e4567-e89b-12d3-a456-426614174000', 'EMP001', 'John', 'Doe', 'Finance', 'john.doe@example.com', 'Accountant'),('223e4567-e89b-12d3-a456-426614174001', 'EMP002', 'Jane', 'Smith', 'IT', 'jane.smith@example.com', 'Developer');
+INSERT INTO employee (employee_id, first_name, last_name, department, email, position) VALUES ('123e4567-e89b-12d3-a456-426614174000','John', 'Doe', 'Finance', 'john.doe@example.com', 'Accountant'),('223e4567-e89b-12d3-a456-426614174001', 'Jane', 'Smith', 'IT', 'jane.smith@example.com', 'Developer');
 
 -- Inserir dados na tabela "manager"
 INSERT INTO manager (manager_id, first_name, last_name, department, email) VALUES ('323e4567-e89b-12d3-a456-426614174002', 'Alice', 'Johnson', 'Finance', 'alice.johnson@example.com'), ('423e4567-e89b-12d3-a456-426614174003', 'Bob', 'Brown', 'IT', 'bob.brown@example.com');

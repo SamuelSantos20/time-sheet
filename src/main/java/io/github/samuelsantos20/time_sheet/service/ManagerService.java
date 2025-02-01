@@ -22,11 +22,11 @@ public class ManagerService {
 
     private final ManagerValidation managerValidation;
 
-    public void managerSave(Manager manager) {
+    public Manager managerSave(Manager manager) {
 
         managerValidation.validation(manager);
 
-        managerData.save(manager);
+        return managerData.save(manager);
 
     }
 
@@ -53,9 +53,9 @@ public class ManagerService {
     }
 
 
-    public void managerDelete(UUID id) {
+    public void managerDelete(Manager manager) {
 
-        managerData.deleteById(id);
+        managerData.delete(manager);
 
     }
 

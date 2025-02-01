@@ -32,7 +32,7 @@ public class EmployeeValidation {
 
     private boolean existsEmployee(Employee employee) {
 
-        Optional<Employee> optionalEmployee = employeeData.entitySelection(employee.getEmail(), employee.getFirstName(),employee.getLastName(), employee.getRegistration());
+        Optional<Employee> optionalEmployee = employeeData.entitySelection(employee.getEmail(), employee.getFirstName(),employee.getLastName());
 
         if (employee.getId() == null) {
 

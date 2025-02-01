@@ -7,6 +7,7 @@ import io.github.samuelsantos20.time_sheet.model.Employee;
 import io.github.samuelsantos20.time_sheet.service.EmployeeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/employee")
+@Slf4j
 public class EmployeeController implements GenericController {
 
     private final EmployeeService employeeService;
@@ -26,6 +28,8 @@ public class EmployeeController implements GenericController {
 
     @PostMapping
     public ResponseEntity<Object> saveEmployee(@RequestBody @Valid EmployeeDTO employeeDTO) {
+
+        log.info("Valores do metodo de save do Employee: {}", employeeDTO);
 
         Employee entity = employeeMapper.toEntity(employeeDTO);
 
@@ -54,6 +58,8 @@ public class EmployeeController implements GenericController {
     public ResponseEntity<Object> Update(@RequestBody @Valid EmployeeDTO employeeDTO,
                                          @PathVariable(value = "id") String id) {
 
+        log.info("Valores do metodo de update de Employee: id = {} ,  employee: {}", id, employeeDTO);
+
         UUID uuid = UUID.fromString(id);
 
         return employeeService.employeeSearch(uuid).map(employee2 -> {
@@ -63,7 +69,6 @@ public class EmployeeController implements GenericController {
             employee2.setFirstName(employeeDTO.firstName());
             employee2.setEmail(employeeDTO.email());
             employee2.setPosition(employeeDTO.position());
-            employee2.setRegistration(employeeDTO.registration());
             employee2.setDepartment(employeeDTO.department());
 
             employeeService.employeeUpdate(employee2);
@@ -77,12 +82,15 @@ public class EmployeeController implements GenericController {
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeDTO> findByIdEmployee(@PathVariable("id") String id) {
 
-        System.out.println(id);
+        log.info("Busca do employee com id de : {}", id);
+
         UUID uuid = UUID.fromString(id);
 
         return employeeService.employeeSearch(uuid).map(employee -> {
 
             EmployeeDTO dto = employeeMapper.toDto(employee);
+
+            log.info("Valores retornados: {} ", dto);
 
             return ResponseEntity.ok(dto);
 
@@ -93,12 +101,13 @@ public class EmployeeController implements GenericController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> Delete(@PathVariable("id")String id) {
+    public ResponseEntity<Object> Delete(@PathVariable("id") String id) {
 
         UUID uuid = UUID.fromString(id);
 
         return employeeService.employeeSearch(uuid).map(employee -> {
 
+            log.info("Usuario excluido: {}", employee);
             employeeService.employeeDelete(employee);
 
             return ResponseEntity.ok().build();
@@ -106,7 +115,6 @@ public class EmployeeController implements GenericController {
         }).orElseGet(() -> ResponseEntity.notFound().build());
 
     }
-
 
 
 }

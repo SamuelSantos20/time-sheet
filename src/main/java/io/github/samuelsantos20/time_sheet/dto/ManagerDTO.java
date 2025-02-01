@@ -6,10 +6,10 @@ import jakarta.validation.constraints.NotBlank;
 public record ManagerDTO(
 
         @NotBlank(message = "O campo first_name é nulo!")
-        String first_name,
+        String firstName,
 
         @NotBlank(message = "O campo last_name é nulo")
-        String last_name,
+        String lastName,
 
         @NotBlank(message = "O campo email é nulo!")
         @Email(message = "O email digitado não é valido!")

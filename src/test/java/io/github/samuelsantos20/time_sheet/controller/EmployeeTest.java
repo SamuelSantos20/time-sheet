@@ -21,7 +21,6 @@ class EmployeeTest {
          employee.setDepartment("TI");
          employee.setEmail("samuelsantos20@gmail.com");
          employee.setPosition("ESTAGIARIO");
-         employee.setRegistration("3401852");
          employee.setFirstName("Samuel");
          employee.setLastName("Santos Miranda");
 
