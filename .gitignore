@@ -43,3 +43,7 @@ pgdata/
 *.log
 node_modules/
 .env
+
+diagrama.txt
+
+import.sql
