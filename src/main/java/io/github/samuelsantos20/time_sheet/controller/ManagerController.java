@@ -8,6 +8,8 @@ import io.github.samuelsantos20.time_sheet.service.ManagerService;
 import io.github.samuelsantos20.time_sheet.service.UserService;
 import io.github.samuelsantos20.time_sheet.util.PasswordGenerator;
 import io.github.samuelsantos20.time_sheet.util.RegistrationGenerator;
+import io.github.samuelsantos20.time_sheet.model.Role;
+
 import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -144,10 +146,14 @@ public class ManagerController implements GenericController {
 
         String password = passwordGenerator.Generator();
 
+        String manager = Role.MANAGER.getDescricao();
+
         user.setPassword(password);
         user.setRegistration(registration);
+        user.getRoles().add(manager);
 
-        log.info("Valores gerados para User: Matricula: {}, Senha: {}",user.getRegistration(), user.getPassword() );
+        log.info("Valores gerados para User: Matricula: {}, Senha: {}, Role: {}",user.getRegistration(), user.getPassword(), Role.MANAGER );
+
 
         return userService.saveUser(user);
 

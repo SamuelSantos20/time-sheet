@@ -8,6 +8,8 @@ import io.github.samuelsantos20.time_sheet.service.EmployeeService;
 import io.github.samuelsantos20.time_sheet.service.UserService;
 import io.github.samuelsantos20.time_sheet.util.PasswordGenerator;
 import io.github.samuelsantos20.time_sheet.util.RegistrationGenerator;
+import io.github.samuelsantos20.time_sheet.model.Role;
+
 import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -153,12 +155,14 @@ public class EmployeeController implements GenericController {
         String generator = registrationGenerator.Generator();
 
         String generator1 = passwordGenerator.Generator();
-
-        log.info("Senha : {}  e  Matricula : {}  gerada pelo meto de save de " +
-                "usuario na classe EmployeeController", generator1, generator);
+        String descricao = Role.EMPLOYEE.getDescricao();
 
         user.setRegistration(generator);
         user.setPassword(generator1);
+        user.getRoles().add(descricao);
+
+        log.info("Valores gerados para User: Matricula: {}, Senha: {}, Role: {}",user.getRegistration(), user.getPassword(), Role.MANAGER );
+
 
         return userService.saveUser(user);
 
