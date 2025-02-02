@@ -4,6 +4,7 @@ import io.github.samuelsantos20.time_sheet.data.TimesheetData;
 import io.github.samuelsantos20.time_sheet.exception.OperationNotPermitted;
 import io.github.samuelsantos20.time_sheet.model.Employee;
 import io.github.samuelsantos20.time_sheet.model.Timesheet;
+import io.github.samuelsantos20.time_sheet.model.User;
 import io.github.samuelsantos20.time_sheet.model.WorkEntry;
 import io.github.samuelsantos20.time_sheet.service.WorkEntryService;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public class EntryAndExitRecord {
 
     private final TimesheetData timesheetData;
 
-    public void Entry(Employee id) {
+    public void Entry(User id) {
 
         LocalDate dayNow = LocalDate.now();
 
@@ -45,7 +46,7 @@ public class EntryAndExitRecord {
             LocalDateTime dayTimeNow = LocalDateTime.now();
 
             workEntry.get().setStartTime(dayTimeNow);
-            workEntry.get().setEmployeeId(id);
+            workEntry.get().setUserId(id);
             workEntryService.workEntrySave(workEntry.get());
 
         });
@@ -53,11 +54,11 @@ public class EntryAndExitRecord {
     }
 
 
-    public void Exit(Employee employee_id) {
-        log.info("Registrando saída para o funcionário: {}", employee_id);
+    public void Exit(User user_id) {
+        log.info("Registrando saída para o funcionário: {}", user_id);
 
         LocalDate exitNow = LocalDate.now();
-        Optional<WorkEntry> exitOptional = workEntryService.searchByCurrentDayAndUserID(exitNow, employee_id);
+        Optional<WorkEntry> exitOptional = workEntryService.searchByCurrentDayAndUserID(exitNow, user_id);
 
         exitOptional.ifPresentOrElse(workEntry -> {
             try {
@@ -79,7 +80,7 @@ public class EntryAndExitRecord {
                 Timesheet timesheet = new Timesheet();
                 Duration totalWorkedTime = Duration.ofHours(totHour).plusMinutes(totMinute);
                 timesheet.setTotalHours(totalWorkedTime);
-                timesheet.setEmployee(exit.getEmployeeId());
+                timesheet.setUserId(exit.getUserId());
 
                 timesheetTimesheetProcess.process(timesheet);
             } catch (Exception e) {
@@ -87,7 +88,7 @@ public class EntryAndExitRecord {
             }
         }, () -> {
             log.info("Entrada ainda não marcada na data atual.");
-            Entry(employee_id);
+            Entry(user_id);
         });
     }
 
@@ -113,7 +114,7 @@ public class EntryAndExitRecord {
             if (Objects.isNull(workEntry.getStartTime()) || Objects.isNull(workEntry.getEndTime())) {
                 LocalDateTime now = LocalDateTime.now();
 
-                timesheetData.ListFindByMonthAndEmployee(now.getMonth().getValue(), now.getYear(), workEntry.getEmployeeId()).forEach(timesheet -> {
+                timesheetData.ListFindByMonthAndUserId(now.getMonth().getValue(), now.getYear(), workEntry.getUserId()).forEach(timesheet -> {
                     try {
                         if (timesheet.getTotalHours().toHours() >= 9) {
                             Duration newTotalHours = timesheet.getTotalHours().minusHours(9);

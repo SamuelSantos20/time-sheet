@@ -2,6 +2,7 @@ package io.github.samuelsantos20.time_sheet.service;
 
 import io.github.samuelsantos20.time_sheet.data.WorkEntryData;
 import io.github.samuelsantos20.time_sheet.model.Employee;
+import io.github.samuelsantos20.time_sheet.model.User;
 import io.github.samuelsantos20.time_sheet.model.WorkEntry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,8 +29,8 @@ public class WorkEntryService {
 
     @Transactional(readOnly = true)
     public Optional<WorkEntry> searchByCurrentDayAndUserID(LocalDate localDate,
-                                                           Employee employee_id) {
-        return workEntryData.findByStart_timeAndEmployee_id(localDate, employee_id);
+                                                           User userId) {
+        return workEntryData.findByStart_timeAndUser_id(localDate, userId);
     }
 
     @Transactional(readOnly = true)

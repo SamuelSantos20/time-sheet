@@ -31,8 +31,8 @@ public class WorkEntry {
     private Timesheet timesheetId;
 
     @ManyToOne
-    @JoinColumn(name = "employee_id")
-    private Employee employeeId;
+    @JoinColumn(name = "userId")
+    private User userId;
 
     @Column(name = "start_time", unique = false, updatable = true)
     private LocalDateTime startTime;

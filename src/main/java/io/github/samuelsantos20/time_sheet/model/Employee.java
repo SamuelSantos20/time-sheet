@@ -24,10 +24,6 @@ public class Employee {
     @Column(name = "employee_id")
     private UUID id;
 
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Timesheet> timesheets = new ArrayList<>();
-
-
     @Column(name = "first_name", length = 100, nullable = false, updatable = true, unique = false)
     private String firstName;
 

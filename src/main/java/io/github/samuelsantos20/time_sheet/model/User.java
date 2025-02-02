@@ -33,6 +33,12 @@ public class User {
     @Column(name = "role", nullable = false, length = 250, unique = false, updatable = true)
     List<String> roles = new ArrayList<>();
 
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Timesheet> timesheets = new ArrayList<>();
+
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<WorkEntry> workEntries = new ArrayList<>();
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Manager> managers = new ArrayList<>();
 

@@ -20,7 +20,7 @@ public class TimesheetProcess {
     private final TimesheetService timesheetService;
 
     public void process(Timesheet timesheet) {
-        log.info("Processando Timesheet para o funcionário: {}", timesheet.getEmployee());
+        log.info("Processando Timesheet para o funcionário: {}", timesheet.getUserId());
         log.info("Mês/Ano do Timesheet: {}/{}", timesheet.getMonth(), timesheet.getYear());
 
         LocalDateTime localDateNow = LocalDateTime.now();
@@ -35,7 +35,7 @@ public class TimesheetProcess {
         Optional<Timesheet> optionalTimesheet = timesheetService.timesheetSearchMonthAndEmployee_id(
                 timesheet.getMonth(),
                 timesheet.getYear(),
-                timesheet.getEmployee());
+                timesheet.getUserId());
 
         optionalTimesheet.ifPresentOrElse(timesheet1 -> {
             try {

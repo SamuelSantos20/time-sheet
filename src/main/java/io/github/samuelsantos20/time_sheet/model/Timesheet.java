@@ -29,8 +29,8 @@ public class Timesheet {
     private UUID timesheetId;
 
     @ManyToOne
-    @JoinColumn(name = "employee", nullable = true)
-    private Employee employee;
+    @JoinColumn(name = "userId", nullable = true)
+    private User userId;
 
     @OneToMany(mappedBy = "timesheetId", cascade = CascadeType.PERSIST)
     private List<WorkEntry> workEntries;

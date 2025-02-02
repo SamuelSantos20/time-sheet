@@ -3,6 +3,7 @@ package io.github.samuelsantos20.time_sheet.service;
 import io.github.samuelsantos20.time_sheet.data.TimesheetData;
 import io.github.samuelsantos20.time_sheet.model.Employee;
 import io.github.samuelsantos20.time_sheet.model.Timesheet;
+import io.github.samuelsantos20.time_sheet.model.User;
 import io.github.samuelsantos20.time_sheet.validation.TimesheetValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,16 +43,16 @@ public class TimesheetService {
 
     public Optional<Timesheet> timesheetSearchMonthAndEmployee_id(int month,
                                                                   int year,
-                                                                  Employee employee_id) {
+                                                                  User userId) {
 
 
-        return timesheetData.findByMonthAndYearAndEmployee_id(month, year, employee_id);
+        return timesheetData.findByMonthAndYearAndUserId(month, year, userId);
     }
 
 
-    public List<Timesheet> ListFindByMonthAndEmployee_id(int month, int year,Employee employee_id) {
+    public List<Timesheet> ListFindByMonthAndEmployee_id(int month, int year, User userId) {
 
-        return timesheetData.ListFindByMonthAndEmployee(month, year, employee_id);
+        return timesheetData.ListFindByMonthAndUserId(month, year, userId);
     }
 
 
