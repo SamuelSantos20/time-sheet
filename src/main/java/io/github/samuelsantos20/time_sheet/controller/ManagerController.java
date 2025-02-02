@@ -3,11 +3,17 @@ package io.github.samuelsantos20.time_sheet.controller;
 import io.github.samuelsantos20.time_sheet.dto.ManagerDTO;
 import io.github.samuelsantos20.time_sheet.mapper.ManagerMapper;
 import io.github.samuelsantos20.time_sheet.model.Manager;
+import io.github.samuelsantos20.time_sheet.model.User;
 import io.github.samuelsantos20.time_sheet.service.ManagerService;
+import io.github.samuelsantos20.time_sheet.service.UserService;
+import io.github.samuelsantos20.time_sheet.util.PasswordGenerator;
+import io.github.samuelsantos20.time_sheet.util.RegistrationGenerator;
+import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -24,14 +30,34 @@ public class ManagerController implements GenericController {
 
     private final ManagerMapper managerMapper;
 
+    private final UserService userService;
+
+    private final EntityManager entityManager;
+
     @PostMapping
-    public ResponseEntity<Object> saveManage(@RequestBody @Valid ManagerDTO managerDTO) {
+    @Transactional
+    public ResponseEntity<Object> saveManager(@RequestBody @Valid ManagerDTO managerDTO) {
 
         log.info("Valores do novo manager : {}", managerDTO);
 
         Manager entity = managerMapper.toEntity(managerDTO);
 
+        User userReturn = entityManager.merge(UserCreate());
+
+        entity.setUser(userReturn);
+
+        log.info("Valores do metodo de save do Manager. Department: {}, FirstName: {}, LastName : {}, Email: {},User: Matricula: {} e Senha: {} ",
+                entity.getDepartment(),
+                entity.getFirstName(),
+                entity.getLastName(),
+                entity.getEmail(),
+                entity.getUser().getRegistration(),
+                entity.getUser().getPassword());
+
+
         Manager manager = managerService.managerSave(entity);
+
+
 
         URI uri = gerarHaderLoccation(manager.getManagerId());
 
@@ -104,6 +130,27 @@ public class ManagerController implements GenericController {
             return ResponseEntity.noContent().build();
 
         }).orElseGet(() -> ResponseEntity.notFound().build());
+
+    }
+
+
+    private User UserCreate(){
+
+        User user = new User();
+        RegistrationGenerator registrationGenerator = new RegistrationGenerator();
+        PasswordGenerator passwordGenerator = new PasswordGenerator();
+
+        String registration = registrationGenerator.Generator();
+
+        String password = passwordGenerator.Generator();
+
+        user.setPassword(password);
+        user.setRegistration(registration);
+
+        log.info("Valores gerados para User: Matricula: {}, Senha: {}",user.getRegistration(), user.getPassword() );
+
+        return userService.saveUser(user);
+
 
     }
 

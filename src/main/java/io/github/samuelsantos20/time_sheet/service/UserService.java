@@ -20,7 +20,6 @@ public class UserService {
 
     private final UserValidation userValidation;
 
-
     public User saveUser(User user) {
 
         userValidation.validation(user);

@@ -29,14 +29,14 @@ public class UserValidation {
 
     private boolean exists(User user){
 
-        Optional<User> byUserId = userData.findByUser_id(user.getUser_id());
+        Optional<User> byUserId = userData.findByRegistration(user.getRegistration());
 
         if (user.getId() == null){
 
             return byUserId.isPresent();
         }
 
-        return byUserId.stream().anyMatch(user1 -> !user1.equals(user.getId()));
+        return byUserId.stream().anyMatch(user1 -> !user1.equals(user.getRegistration()));
     }
 
 

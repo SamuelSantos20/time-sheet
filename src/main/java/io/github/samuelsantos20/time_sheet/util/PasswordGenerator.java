@@ -4,28 +4,25 @@ import java.util.Random;
 
 public class PasswordGenerator {
 
-    private final static int LENGTH = 8;
+    private static final String CARACTERES_PERMITIDOS =
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+                    "abcdefghijklmnopqrstuvwxyz" +
+                    "0123456789" +
+                    "!@#$%^&*()";
 
     public String Generator() {
-
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
-
         Random random = new Random();
-
-        StringBuilder password = new StringBuilder();
-
-        for (int i = 0; i < LENGTH; i++) {
+        StringBuilder senha = new StringBuilder();
 
 
-            int index = random.nextInt(characters.length());
-
-            password.append(index);
-
+        for (int i = 0; i < 7; i++) {
+            int index = random.nextInt(CARACTERES_PERMITIDOS.length());
+            senha.append(CARACTERES_PERMITIDOS.charAt(index));
         }
 
-        return password.toString();
-
+        return senha.toString();
     }
+
 
 
 }

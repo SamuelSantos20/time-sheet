@@ -1,8 +1,10 @@
 package io.github.samuelsantos20.time_sheet.dto;
 
 import io.github.samuelsantos20.time_sheet.model.Timesheet;
+import io.github.samuelsantos20.time_sheet.model.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
@@ -23,7 +25,6 @@ public record EmployeeDTO(
         @NotBlank(message = "O campo department é nulo!")
         String department,
 
-
-        @NotBlank(message = "O campo registration é nulo!")
-        String registration) {
+        User user
+) {
 }

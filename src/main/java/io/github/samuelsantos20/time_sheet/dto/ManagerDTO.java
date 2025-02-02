@@ -1,5 +1,6 @@
 package io.github.samuelsantos20.time_sheet.dto;
 
+import io.github.samuelsantos20.time_sheet.model.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -16,5 +17,9 @@ public record ManagerDTO(
         String email,
 
         @NotBlank(message = "O campo department é nulo!")
-        String department) {
+        String department,
+
+        User user
+
+) {
 }

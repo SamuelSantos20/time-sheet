@@ -53,6 +53,8 @@ public class GlobalException {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse UnexpectedOperation(RuntimeException e) {
 
+        log.error("Erro inesperaod: {}", e.getMessage());
+
         return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Ocorreu um erro inesperado, entre em contato com o suporte para maiores informaçãoes!", List.of());
 
     }

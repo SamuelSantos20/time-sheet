@@ -32,6 +32,11 @@ public class Manager {
     @Column(name = "department", nullable = false, updatable = true, length = 200, unique = false)
     private String department;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+
 
     @Override
     public final boolean equals(Object o) {

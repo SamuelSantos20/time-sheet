@@ -43,6 +43,9 @@ public class Employee {
     @Column(name = "department", length = 200, nullable = false, updatable = false, unique = false)
     private String department;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Override
     public final boolean equals(Object o) {

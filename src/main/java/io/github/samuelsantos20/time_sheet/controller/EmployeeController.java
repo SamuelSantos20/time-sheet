@@ -1,19 +1,23 @@
 package io.github.samuelsantos20.time_sheet.controller;
 
-import io.github.samuelsantos20.time_sheet.data.EmployeeData;
 import io.github.samuelsantos20.time_sheet.dto.EmployeeDTO;
 import io.github.samuelsantos20.time_sheet.mapper.EmployeeMapper;
 import io.github.samuelsantos20.time_sheet.model.Employee;
+import io.github.samuelsantos20.time_sheet.model.User;
 import io.github.samuelsantos20.time_sheet.service.EmployeeService;
+import io.github.samuelsantos20.time_sheet.service.UserService;
+import io.github.samuelsantos20.time_sheet.util.PasswordGenerator;
+import io.github.samuelsantos20.time_sheet.util.RegistrationGenerator;
+import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -26,15 +30,36 @@ public class EmployeeController implements GenericController {
 
     private final EmployeeMapper employeeMapper;
 
+    private final UserService userService;
+
+    private final EntityManager  entityManager;
+
+
     @PostMapping
+    @Transactional
     public ResponseEntity<Object> saveEmployee(@RequestBody @Valid EmployeeDTO employeeDTO) {
 
-        log.info("Valores do metodo de save do Employee: {}", employeeDTO);
+
+        log.info("Valores do metodo de save do EmployeeDTO: {}", employeeDTO);
 
         Employee entity = employeeMapper.toEntity(employeeDTO);
 
-        Employee employee = employeeService.employeeSave(entity);
+        User user = entityManager.merge(UserCreate());
 
+        entity.setUser(user);
+
+
+        log.info("Valores do metodo de save do Employee. Department: {} , Position: {}, FirstName: {}, LastName : {}, Email: {},User: Matricula: {} e Senha: {} ",
+                entity.getDepartment(),
+                entity.getPosition(),
+                entity.getFirstName(),
+                entity.getLastName(),
+                entity.getEmail(),
+                entity.getUser().getRegistration(),
+                entity.getUser().getPassword());
+
+
+        Employee employee = employeeService.employeeSave(entity);
 
         URI uri = gerarHaderLoccation(employee.getId());
 
@@ -113,6 +138,30 @@ public class EmployeeController implements GenericController {
             return ResponseEntity.ok().build();
 
         }).orElseGet(() -> ResponseEntity.notFound().build());
+
+    }
+
+
+    private User UserCreate() {
+
+        User user = new User();
+
+        RegistrationGenerator registrationGenerator = new RegistrationGenerator();
+
+        PasswordGenerator passwordGenerator = new PasswordGenerator();
+
+        String generator = registrationGenerator.Generator();
+
+        String generator1 = passwordGenerator.Generator();
+
+        log.info("Senha : {}  e  Matricula : {}  gerada pelo meto de save de " +
+                "usuario na classe EmployeeController", generator1, generator);
+
+        user.setRegistration(generator);
+        user.setPassword(generator1);
+
+        return userService.saveUser(user);
+
 
     }
 

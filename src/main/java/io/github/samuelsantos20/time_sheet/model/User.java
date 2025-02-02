@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -15,7 +17,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "user")
+@Table(name = "users") // Escape the table name
 public class User {
 
     @Id
@@ -28,8 +30,11 @@ public class User {
     @Column(name = "registration", length = 7, updatable = false, unique = false, nullable = false)
     private String registration;
 
-    @Column(name = "employee_or_manager_id", unique = false, nullable = false, updatable = false)
-    private UUID user_id;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Manager> managers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Employee> employees = new ArrayList<>();
 
     
     @Override

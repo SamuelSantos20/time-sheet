@@ -10,6 +10,8 @@ import java.util.UUID;
 
 @Repository
 public interface UserData extends JpaRepository<User, UUID> {
-    @Query("select u from User u where u.user_id = ?1")
-    Optional<User> findByUser_id(UUID user_id);
+
+
+    @Query("select u from User u where u.registration = ?1")
+    Optional<User> findByRegistration(String registration);
 }
