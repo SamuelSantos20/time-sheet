@@ -1,17 +1,23 @@
 package io.github.samuelsantos20.time_sheet.util;
 
 import io.github.samuelsantos20.time_sheet.data.TimesheetData;
+import io.github.samuelsantos20.time_sheet.data.WorkEntryData;
 import io.github.samuelsantos20.time_sheet.exception.OperationNotPermitted;
 import io.github.samuelsantos20.time_sheet.model.Employee;
 import io.github.samuelsantos20.time_sheet.model.Timesheet;
 import io.github.samuelsantos20.time_sheet.model.User;
 import io.github.samuelsantos20.time_sheet.model.WorkEntry;
+import io.github.samuelsantos20.time_sheet.service.UserService;
 import io.github.samuelsantos20.time_sheet.service.WorkEntryService;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,19 +25,24 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Component
 @Slf4j
 public class EntryAndExitRecord {
-
     private final WorkEntryService workEntryService;
 
     private final TimesheetProcess timesheetTimesheetProcess;
 
     private final TimesheetData timesheetData;
 
-    public void Entry(User id) {
+    private final UserService userService;
+
+    private final EntityManager entityManager;
+
+    @Transactional
+    public void Entry(UUID id) {
 
         LocalDate dayNow = LocalDate.now();
 
@@ -39,22 +50,39 @@ public class EntryAndExitRecord {
 
         workEntry.ifPresentOrElse(workEntry1 -> {
 
-            throw new OperationNotPermitted("Já consta entrada reistrada no dia de Hoje!");
+
+            log.error("Usuário não encontrado com ID: {}", id);
 
         }, () -> {
 
+
+            System.out.println(1);
+
             LocalDateTime dayTimeNow = LocalDateTime.now();
 
-            workEntry.get().setStartTime(dayTimeNow);
-            workEntry.get().setUserId(id);
-            workEntryService.workEntrySave(workEntry.get());
+            Optional<User> userOptional = userService.findByUserId(id);
+
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+
+                WorkEntry entry = new WorkEntry();
+                entry.setStartTime(dayTimeNow);
+                entry.setUserId(user);
+
+                log.info("valor save workEntry: {} ", entry.getUserId().getId());
+
+                workEntryService.workEntrySave(entry);
+
+            }
+
 
         });
 
     }
 
 
-    public void Exit(User user_id) {
+    @Transactional
+    public void Exit(UUID user_id) {
         log.info("Registrando saída para o funcionário: {}", user_id);
 
         LocalDate exitNow = LocalDate.now();
@@ -64,7 +92,7 @@ public class EntryAndExitRecord {
             try {
                 LocalDateTime exitTimeNow = LocalDateTime.now();
                 workEntry.setEndTime(exitTimeNow);
-                WorkEntry exit = workEntryService.workEntryUpdate(workEntry);
+                WorkEntry exit = entityManager.merge(workEntryService.workEntryUpdate(workEntry));
 
                 Duration duration = Duration.between(exit.getStartTime(), exit.getEndTime());
                 int totHour = (int) duration.toHours();
@@ -101,13 +129,14 @@ public class EntryAndExitRecord {
      * *: Todos os meses.
      */
     @Scheduled(cron = "0 0 23 * * ?") // Executa todos os dias às 23:00 (11 PM)
-    private void ajustarHorasTrabalhadas() {
+    public void ajustarHorasTrabalhadas() {
         log.info("Tarefa agendada executada às 23:00 para ajustar horas trabalhadas.");
 
         LocalDate localDate = LocalDate.now();
         log.info("Executando tarefa agendada para: {}", localDate);
 
         List<WorkEntry> workEntries = workEntryService.findByStart_timeAndExit_time(localDate);
+
         log.info("Total de registros para serem analisados: {}", workEntries.size());
 
         workEntries.forEach(workEntry -> {

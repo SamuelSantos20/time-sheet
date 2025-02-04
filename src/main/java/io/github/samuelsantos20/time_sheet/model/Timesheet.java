@@ -28,14 +28,14 @@ public class Timesheet {
     @Column(name = "timesheet_id")
     private UUID timesheetId;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "userId", nullable = true)
     private User userId;
 
     @OneToMany(mappedBy = "timesheetId", cascade = CascadeType.PERSIST)
     private List<WorkEntry> workEntries;
 
-    @OneToOne(mappedBy = "timesheet", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "timesheet", cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "approval")
     private Approval approval;
 

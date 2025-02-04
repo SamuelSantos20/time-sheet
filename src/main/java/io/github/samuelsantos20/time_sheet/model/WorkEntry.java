@@ -26,11 +26,11 @@ public class WorkEntry {
     @Column(name = "work_entry_id")
     private UUID workEntryId;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "timesheet_id")
     private Timesheet timesheetId;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "userId")
     private User userId;
 

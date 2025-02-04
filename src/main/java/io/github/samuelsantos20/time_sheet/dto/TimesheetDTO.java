@@ -2,6 +2,7 @@ package io.github.samuelsantos20.time_sheet.dto;
 
 import io.github.samuelsantos20.time_sheet.model.Approval;
 import io.github.samuelsantos20.time_sheet.model.Employee;
+import io.github.samuelsantos20.time_sheet.model.User;
 import io.github.samuelsantos20.time_sheet.model.WorkEntry;
 import jakarta.validation.constraints.NotNull;
 
@@ -9,11 +10,8 @@ import java.time.LocalTime;
 import java.util.List;
 
 public record TimesheetDTO(
-        @NotNull(message = "O campo employee_id é nulo!")
-        Employee employee_id,
-
-
-        List<WorkEntry> workEntries,
+        @NotNull(message = "O campo userId é nulo!")
+        User userId,
 
         Approval approval,
 

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -21,22 +22,22 @@ public class WorkEntryService {
 
 
 
-    public WorkEntry workEntrySave(WorkEntry workEntry) {
+    public void workEntrySave(WorkEntry workEntry) {
 
-        return workEntryData.save(workEntry);
+         workEntryData.save(workEntry);
 
     }
 
     @Transactional(readOnly = true)
     public Optional<WorkEntry> searchByCurrentDayAndUserID(LocalDate localDate,
-                                                           User userId) {
-        return workEntryData.findByStart_timeAndUser_id(localDate, userId);
+                                                           UUID userId) {
+        return workEntryData.findByStartTimeAndUserId(localDate, userId);
     }
 
     @Transactional(readOnly = true)
     public List<WorkEntry> findByStart_timeAndExit_time(LocalDate localDate) {
 
-        return workEntryData.findByStart_timeAndExit_time(localDate);
+        return workEntryData.findByStartTimeAndEndTime(localDate);
 
     }
 
