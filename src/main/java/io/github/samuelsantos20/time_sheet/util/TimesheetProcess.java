@@ -19,6 +19,7 @@ public class TimesheetProcess {
 
     private final TimesheetService timesheetService;
 
+
     public void process(Timesheet timesheet) {
         log.info("Processando Timesheet para o funcionário: {}", timesheet.getUserId());
         log.info("Mês/Ano do Timesheet: {}/{}", timesheet.getMonth(), timesheet.getYear());

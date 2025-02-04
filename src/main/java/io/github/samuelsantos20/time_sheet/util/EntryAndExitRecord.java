@@ -54,10 +54,7 @@ public class EntryAndExitRecord {
             log.error("Usuário não encontrado com ID: {}", id);
 
         }, () -> {
-
-
-            System.out.println(1);
-
+            
             LocalDateTime dayTimeNow = LocalDateTime.now();
 
             Optional<User> userOptional = userService.findByUserId(id);
@@ -102,7 +99,6 @@ public class EntryAndExitRecord {
 
                 if (totHour > 10) {
                     log.warn("Horas extras detectadas: {} horas e {} minutos", totHour, totMinute);
-                    // Considere armazenar horas extras em um campo separado.
                 }
 
                 Timesheet timesheet = new Timesheet();
@@ -116,7 +112,7 @@ public class EntryAndExitRecord {
             }
         }, () -> {
             log.info("Entrada ainda não marcada na data atual.");
-            Entry(user_id);
+            throw new OperationNotPermitted("Entrada ainda não marcada na data atual.");
         });
     }
 
