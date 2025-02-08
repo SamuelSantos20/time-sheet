@@ -26,7 +26,7 @@ public class WorkEntry {
     @Column(name = "work_entry_id")
     private UUID workEntryId;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "timesheet_id")
     private Timesheet timesheetId;
 

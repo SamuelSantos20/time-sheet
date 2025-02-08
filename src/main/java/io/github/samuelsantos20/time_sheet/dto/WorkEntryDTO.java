@@ -1,24 +1,26 @@
 package io.github.samuelsantos20.time_sheet.dto;
 
-import io.github.samuelsantos20.time_sheet.model.Timesheet;
-import io.github.samuelsantos20.time_sheet.model.User;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 public record WorkEntryDTO(
 
-        Timesheet timesheet_id,
+        UUID timesheet_id,
 
-        @NotNull(message = "O campo userId é nulo!")
-        User userId,
+        @NotBlank(message = "O campo registration_user é nulo!")
+        String registration_user,
 
-        LocalTime start_time,
+        LocalDateTime start_time,
 
-        LocalTime end_time
+        LocalDateTime end_time,
 
-) {
+        LocalDateTime dateCreated,
 
+        LocalDateTime dateUpdate
+
+        ) {
 
 
 }

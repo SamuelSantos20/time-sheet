@@ -20,6 +20,7 @@ public class TimesheetProcess {
     private final TimesheetService timesheetService;
 
 
+
     public void process(Timesheet timesheet) {
         log.info("Processando Timesheet para o funcionário: {}", timesheet.getUserId());
         log.info("Mês/Ano do Timesheet: {}/{}", timesheet.getMonth(), timesheet.getYear());
@@ -34,25 +35,29 @@ public class TimesheetProcess {
         }
 
         Optional<Timesheet> optionalTimesheet = timesheetService.timesheetSearchMonthAndEmployee_id(
-                timesheet.getMonth(),
-                timesheet.getYear(),
+                yearMonth.getMonth().getValue(),
+                yearMonth.getYear(),
                 timesheet.getUserId());
 
-        optionalTimesheet.ifPresentOrElse(timesheet1 -> {
+         optionalTimesheet.ifPresentOrElse(timesheet1 -> {
             try {
                 Timesheet existingTimesheet = optionalTimesheet.get();
                 Duration totalWorkedTime = existingTimesheet.getTotalHours().plus(timesheet.getTotalHours());
                 existingTimesheet.setTotalHours(totalWorkedTime);
 
                 timesheetService.timesheetSave(existingTimesheet);
+
                 log.info("Timesheet atualizado com sucesso: {}", existingTimesheet);
+
             } catch (Exception e) {
                 log.error("Erro ao atualizar Timesheet: {}", e.getMessage(), e);
             }
         }, () -> {
             try {
+
                 timesheetService.timesheetSave(timesheet);
                 log.info("Novo Timesheet salvo com sucesso: {}", timesheet);
+
             } catch (Exception e) {
                 log.error("Erro ao salvar novo Timesheet: {}", e.getMessage(), e);
             }

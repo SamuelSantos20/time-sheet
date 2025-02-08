@@ -161,7 +161,7 @@ public class EmployeeController implements GenericController {
         user.setPassword(generator1);
         user.getRoles().add(descricao);
 
-        log.info("Valores gerados para User: Matricula: {}, Senha: {}, Role: {}",user.getRegistration(), user.getPassword(), Role.MANAGER );
+        log.info("Valores gerados para User: Matricula: {}, Senha: {}, Role: {}",user.getRegistration(), user.getPassword(), Role.EMPLOYEE );
 
 
         return userService.saveUser(user);

@@ -1,13 +1,12 @@
 package io.github.samuelsantos20.time_sheet.data;
 
-import io.github.samuelsantos20.time_sheet.model.Employee;
-import io.github.samuelsantos20.time_sheet.model.Timesheet;
-import io.github.samuelsantos20.time_sheet.model.User;
+import io.github.samuelsantos20.time_sheet.model.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,9 +18,13 @@ public interface TimesheetData extends JpaRepository<Timesheet, UUID> {
 
     @Query("SELECT t FROM Timesheet t WHERE t.month = :month AND t.year = :year AND t.userId = :userId")
     List<Timesheet> ListFindByMonthAndUserId(@Param("month") int month,
-                                               @Param("year") int year,
-                                               @Param("userId") User userId);
+                                             @Param("year") int year,
+                                             @Param("userId") User userId);
 
+
+
+    //    @Query("select t from Timesheet t where t.day = ?1 and t.month = ?2 and t.year = ?3 and t.userId= ?4")
+//    List<Timesheet> findByDayAndMonthAndYearAndUserId_Id(int day, int month, int year, User id);
 
 
 }

@@ -5,10 +5,12 @@ import io.github.samuelsantos20.time_sheet.model.Employee;
 import io.github.samuelsantos20.time_sheet.model.User;
 import io.github.samuelsantos20.time_sheet.model.WorkEntry;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -48,8 +50,31 @@ public class WorkEntryService {
 
     }
 
+    @Transactional(readOnly = true)
+    public List<WorkEntry> workEntryList() {
+
+        return workEntryData.findAll();
+
+    }
+
+    @Transactional(readOnly = true)
+    public List<WorkEntry> findByUserId_IdAndTimesheetId_Month(UUID id, int month) {
+
+        return workEntryData.findByUserId_IdAndTimesheetId_Month(id, month);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<WorkEntry> findByUserId_IdAndTimesheetId_MonthAndTimesheetId_Year(UUID id, int month, int year) {
+
+        return workEntryData.findByUserId_IdAndTimesheetId_MonthAndTimesheetId_Year( id, month,  year);
+    }
 
 
+    @Transactional(readOnly = true)
+    public Optional<WorkEntry> findByEndTime(LocalDate date, UUID userId) {
 
+       return workEntryData.findByEndTime(date, userId);
+
+    }
 
 }

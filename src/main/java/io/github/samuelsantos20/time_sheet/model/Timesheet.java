@@ -1,6 +1,7 @@
 package io.github.samuelsantos20.time_sheet.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,7 +12,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -20,6 +20,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "timesheet")
 @EntityListeners(AuditingEntityListener.class)
 public class Timesheet {
@@ -32,12 +33,13 @@ public class Timesheet {
     @JoinColumn(name = "userId", nullable = true)
     private User userId;
 
-    @OneToMany(mappedBy = "timesheetId", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "timesheetId", cascade = CascadeType.ALL)
     private List<WorkEntry> workEntries;
 
     @OneToOne(mappedBy = "timesheet", cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "approval")
     private Approval approval;
+
 
     @Column(name = "timesheet_month")
     private int month;

@@ -1,9 +1,7 @@
 package io.github.samuelsantos20.time_sheet.util;
 
 import io.github.samuelsantos20.time_sheet.data.TimesheetData;
-import io.github.samuelsantos20.time_sheet.data.WorkEntryData;
 import io.github.samuelsantos20.time_sheet.exception.OperationNotPermitted;
-import io.github.samuelsantos20.time_sheet.model.Employee;
 import io.github.samuelsantos20.time_sheet.model.Timesheet;
 import io.github.samuelsantos20.time_sheet.model.User;
 import io.github.samuelsantos20.time_sheet.model.WorkEntry;
@@ -11,17 +9,14 @@ import io.github.samuelsantos20.time_sheet.service.UserService;
 import io.github.samuelsantos20.time_sheet.service.WorkEntryService;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -51,10 +46,12 @@ public class EntryAndExitRecord {
         workEntry.ifPresentOrElse(workEntry1 -> {
 
 
-            log.error("Usuário não encontrado com ID: {}", id);
+            log.error("Já consta registro de entrada para o dia de hoje! Usuario: {}", workEntry1.getUserId().getId());
+
+            throw new OperationNotPermitted("Já consta registro de entrada para o dia de hoje!");
 
         }, () -> {
-            
+
             LocalDateTime dayTimeNow = LocalDateTime.now();
 
             Optional<User> userOptional = userService.findByUserId(id);
@@ -85,6 +82,12 @@ public class EntryAndExitRecord {
         LocalDate exitNow = LocalDate.now();
         Optional<WorkEntry> exitOptional = workEntryService.searchByCurrentDayAndUserID(exitNow, user_id);
 
+        if (exitOptional.get().getEndTime() != null){
+
+            throw new OperationNotPermitted("Já consta saida marcada na presente data.");
+
+        }
+
         exitOptional.ifPresentOrElse(workEntry -> {
             try {
                 LocalDateTime exitTimeNow = LocalDateTime.now();
@@ -102,9 +105,13 @@ public class EntryAndExitRecord {
                 }
 
                 Timesheet timesheet = new Timesheet();
+                LocalDate localDate = LocalDate.now();
+
                 Duration totalWorkedTime = Duration.ofHours(totHour).plusMinutes(totMinute);
                 timesheet.setTotalHours(totalWorkedTime);
                 timesheet.setUserId(exit.getUserId());
+                timesheet.setYear(localDate.getYear());
+                timesheet.setMonth(localDate.getMonth().getValue());
 
                 timesheetTimesheetProcess.process(timesheet);
             } catch (Exception e) {
@@ -141,15 +148,12 @@ public class EntryAndExitRecord {
 
                 timesheetData.ListFindByMonthAndUserId(now.getMonth().getValue(), now.getYear(), workEntry.getUserId()).forEach(timesheet -> {
                     try {
-                        if (timesheet.getTotalHours().toHours() >= 9) {
                             Duration newTotalHours = timesheet.getTotalHours().minusHours(9);
                             timesheet.setTotalHours(newTotalHours);
 
                             Timesheet save = timesheetData.save(timesheet);
                             log.info("Resultado da função de acompanhamento do work_entry: {}", save);
-                        } else {
-                            log.warn("Total de horas menor que 9 para o Timesheet: {}", timesheet);
-                        }
+
                     } catch (Exception e) {
                         log.error("Erro ao processar o Timesheet: {}", e.getMessage(), e);
                     }
