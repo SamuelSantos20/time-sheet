@@ -69,18 +69,6 @@ public class TimesheetService {
     }
 
 
-    public List<Timesheet> ListFindByMonthAndEmployee_id(int month, int year, User userId) {
-
-        return timesheetData.ListFindByMonthAndUserId(month, year, userId);
-    }
-
-//
-//    public List<Timesheet> findByDayAndMonthAndYearAndUserId_Id(int day , int month, int year, User userId) {
-//
-//        return timesheetData.findByDayAndMonthAndYearAndUserId_Id(day, month, year, userId);
-//
-//    }
-
 
     public void timesheetUpdate(Timesheet timesheet) {
 
