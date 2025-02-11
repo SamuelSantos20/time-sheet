@@ -35,7 +35,13 @@ public class TimesheetController {
 
         Stream<TimesheetAlternativeDTO> timesheetStream = timesheetService.TimesheetList().stream().map(timesheets -> {
 
-            TimesheetAlternativeDTO timesheet = new TimesheetAlternativeDTO(timesheets.getUserId().getRegistration(), timesheets.getApproval(), timesheets.getMonth(), timesheets.getYear(), timesheets.getTimeSheetUpdate(),timesheets.getTimeSheetCreated(), timesheets.getTotalHours().toHours());
+            TimesheetAlternativeDTO timesheet = new TimesheetAlternativeDTO(timesheets.getUserId().getRegistration(),
+                    timesheets.getApproval(),
+                    timesheets.getMonth(),
+                    timesheets.getYear(),
+                    timesheets.getTimeSheetUpdate(),
+                    timesheets.getTimeSheetCreated(),
+                    timesheets.getTotalHours().toHours());
 
 
 
