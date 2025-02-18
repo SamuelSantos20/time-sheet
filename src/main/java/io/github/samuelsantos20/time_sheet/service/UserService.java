@@ -1,6 +1,7 @@
 package io.github.samuelsantos20.time_sheet.service;
 
 import io.github.samuelsantos20.time_sheet.data.UserData;
+import io.github.samuelsantos20.time_sheet.model.Manager;
 import io.github.samuelsantos20.time_sheet.model.User;
 import io.github.samuelsantos20.time_sheet.validation.UserValidation;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,13 @@ public class UserService {
 
     }
 
+    public  void Update(User user) {
+
+       // userValidation.validation(user);
+
+        userData.save(user);
+    }
+
     @Transactional(readOnly = true)
     public List<User> userList() {
 
@@ -45,6 +53,13 @@ public class UserService {
     public void DeleteUser(User user) {
 
         userData.delete(user);
+
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<User> findByManagers_User(User user) {
+
+        return userData.findByManagers_User(user);
 
     }
 
