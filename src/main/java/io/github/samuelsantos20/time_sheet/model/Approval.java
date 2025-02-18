@@ -1,5 +1,7 @@
 package io.github.samuelsantos20.time_sheet.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Table(name = "approval")
 @EntityListeners(AuditingEntityListener.class)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "approvalId")
 public class Approval {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -22,8 +25,8 @@ public class Approval {
     private UUID approvalId;
 
     @ManyToOne
-    @JoinColumn(name = "manager")
-    private Manager manager;
+    @JoinColumn(name = "user_manager")
+    private User user;
 
     @OneToOne
     @JoinColumn(name = "timesheet", nullable = false, unique = true)

@@ -21,9 +21,10 @@ public class ApprovalService {
     private final ApprovalData approvalData;
 
 
-    public void approvalSave(Approval approval) {
+    public Approval approvalSave(Approval approval) {
 
-        approvalData.save(approval);
+        return approvalData.save(approval);
+
 
     }
 
@@ -38,6 +39,13 @@ public class ApprovalService {
 
         return Optional.ofNullable(approvalData.findById(id).orElseThrow(() -> new BadRequestException("Approval não localizado!")));
 
+    }
+
+
+    @Transactional(readOnly = true)
+    public Optional<Approval> Approval_TimesheetSearch(UUID id, UUID timesheet) {
+
+        return approvalData.findByUser_IdAndTimesheet_TimesheetId(id, timesheet);
     }
 
 

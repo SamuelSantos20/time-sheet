@@ -7,14 +7,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public record ApprovalDTO(
 
         @NotNull(message = "É necessario que seja indicado o manager da tarefa!")
-        Manager manager,
+        UUID idUser,
 
         @NotNull(message = "É necessario que haja a indicação da timesheet!")
-        Timesheet timesheet,
+        UUID idTimesheet,
 
         @NotNull(message = "É necessario que haja algun status para a folha(PENDING,APPROVED,REJECTED)!")
         ApprovalStatus approvalStatus,
@@ -25,4 +26,8 @@ public record ApprovalDTO(
 
         @NotBlank(message = "É necessario que haja algun comment!")
         String comments) {
+
+
+
+
 }

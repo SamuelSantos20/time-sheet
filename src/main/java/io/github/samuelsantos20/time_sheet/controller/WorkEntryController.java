@@ -26,8 +26,6 @@ public class WorkEntryController {
 
     private final EntryAndExitRecord entryAndExitRecord;
 
-    private final WorkEntryMapper workEntryMapper;
-
     private final WorkEntryService workEntryService;
 
     @PostMapping(value = "/{userId}/entry")

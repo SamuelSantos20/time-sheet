@@ -1,5 +1,8 @@
 package io.github.samuelsantos20.time_sheet.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +26,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Table(name = "timesheet")
 @EntityListeners(AuditingEntityListener.class)
+@JsonIgnoreProperties({"workEntries"})
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "timesheetId")
 public class Timesheet {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -37,9 +42,8 @@ public class Timesheet {
     private List<WorkEntry> workEntries;
 
     @OneToOne(mappedBy = "timesheet", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "approval")
+    @JoinColumn(name = "approval", nullable = false)
     private Approval approval;
-
 
     @Column(name = "timesheet_month")
     private int month;

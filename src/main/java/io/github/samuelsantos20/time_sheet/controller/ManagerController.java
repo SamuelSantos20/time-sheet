@@ -68,6 +68,7 @@ public class ManagerController implements GenericController {
 
     }
 
+
     @GetMapping
     public ResponseEntity<Object> findAllManager() {
 

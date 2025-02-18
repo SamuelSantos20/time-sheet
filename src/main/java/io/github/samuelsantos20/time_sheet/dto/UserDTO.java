@@ -9,10 +9,8 @@ public record UserDTO(
         @NotBlank(message = "O campo password recebeu o valor null")
         String password,
 
-        @NotBlank(message = "O campo registration recebeu o valor null")
         String registration,
 
-        @NotNull(message = "O campo de role se encontra vazio!")
-        List<String>roles
+        List<String> roles
 ) {
 }

@@ -13,8 +13,6 @@ public record TimesheetAlternativeDTO(
         @NotNull(message = "O campo userId é null!")
         String registration_user,
 
-        Approval approval,
-
         @NotNull(message = "O campo month é null!")
         int month,
 
