@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
+@AllArgsConstructor
 @Table(name = "users") // Escape the table name
 @JsonIgnoreProperties({"managers","timesheets","workEntries", "managers","employees"} ) // Ignora a serialização da lista
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
@@ -30,7 +32,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "password", length = 8, nullable = false, unique = false, updatable = true)
+    @Column(name = "password", length = 100, nullable = false, unique = false, updatable = true)
     private String password;
 
     @Column(name = "registration", length = 7, updatable = false, unique = false, nullable = false)
@@ -68,4 +70,5 @@ public class User {
     public final int hashCode() {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
+
 }

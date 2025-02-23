@@ -5,6 +5,8 @@ import io.github.samuelsantos20.time_sheet.model.Manager;
 import io.github.samuelsantos20.time_sheet.model.User;
 import io.github.samuelsantos20.time_sheet.validation.UserValidation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,17 +23,28 @@ public class UserService {
 
     private final UserValidation userValidation;
 
+    //private final PasswordEncoder passwordEncoder;
+
     public User saveUser(User user) {
 
         userValidation.validation(user);
+
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
+        String encode = bCryptPasswordEncoder.encode(user.getPassword());
+
+        user.setPassword(encode);
 
         return userData.save(user);
 
     }
 
-    public  void Update(User user) {
+    public void Update(User user) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
-       // userValidation.validation(user);
+        String encode = bCryptPasswordEncoder.encode(user.getPassword());
+
+        user.setPassword(encode);
 
         userData.save(user);
     }
@@ -63,5 +76,11 @@ public class UserService {
 
     }
 
+    @Transactional(readOnly = true)
+    public Optional<User> findByRegistration(String registration) {
+
+        return userData.findByRegistration(registration);
+
+    }
 
 }

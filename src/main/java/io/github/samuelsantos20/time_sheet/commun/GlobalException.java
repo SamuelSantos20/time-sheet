@@ -6,6 +6,7 @@ import io.github.samuelsantos20.time_sheet.exception.DuplicateRecord;
 import io.github.samuelsantos20.time_sheet.exception.OperationNotPermitted;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -48,6 +49,14 @@ public class GlobalException {
 
         return ErrorResponse.conflict(e.getMessage());
     }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handlerAccessDeniedException(AccessDeniedException e) {
+
+        return new ErrorResponse(HttpStatus.FORBIDDEN.value(), "Acesso Negado!", List.of());
+    }
+
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

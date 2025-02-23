@@ -24,7 +24,7 @@ public class ManagerService {
 
     public Manager managerSave(Manager manager) {
 
-        managerValidation.validation(manager);
+       // managerValidation.validation(manager);
 
         return managerData.save(manager);
 

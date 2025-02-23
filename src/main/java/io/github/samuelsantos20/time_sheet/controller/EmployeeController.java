@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +40,7 @@ public class EmployeeController implements GenericController {
 
     @PostMapping
     @Transactional
+    @PreAuthorize(value = "hasRole('Gerente')")
     public ResponseEntity<Object> saveEmployee(@RequestBody @Valid EmployeeDTO employeeDTO) {
 
 
@@ -69,6 +71,7 @@ public class EmployeeController implements GenericController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('Gerente')")
     public ResponseEntity<Object> findAll() {
 
 
@@ -82,6 +85,7 @@ public class EmployeeController implements GenericController {
     }
 
     @PutMapping(value = "/{id}")
+    @PreAuthorize("hasRole('Gerente')")
     public ResponseEntity<Object> Update(@RequestBody @Valid EmployeeDTO employeeDTO,
                                          @PathVariable(value = "id") String id) {
 
@@ -107,6 +111,7 @@ public class EmployeeController implements GenericController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('Gerente', 'Funcionário')")
     public ResponseEntity<EmployeeDTO> findByIdEmployee(@PathVariable("id") String id) {
 
         log.info("Busca do employee com id de : {}", id);
@@ -128,6 +133,7 @@ public class EmployeeController implements GenericController {
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('Gerente')")
     public ResponseEntity<Object> Delete(@PathVariable("id") String id) {
 
         UUID uuid = UUID.fromString(id);

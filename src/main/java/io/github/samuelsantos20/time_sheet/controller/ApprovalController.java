@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -34,6 +35,7 @@ public class ApprovalController implements GenericController {
 
 
     @PostMapping
+    @PreAuthorize(value = "hasRole('Gerente')")
     public ResponseEntity<Object> saveApproval(@RequestBody @Valid ApprovalDTO approvalDTO) {
 
         Approval entity = approvalMapper.toEntity(approvalDTO);
@@ -50,6 +52,7 @@ public class ApprovalController implements GenericController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('Gerente', 'Funcionário')")
     public ResponseEntity<ApprovalResponse> Approval_TimesheetSearch(@RequestParam(value = "id_manager") String id_manager,
                                                                      @RequestParam(value = "id_timesheet") String id_timesheet) {
 

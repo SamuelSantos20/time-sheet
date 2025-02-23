@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -24,6 +25,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     @SneakyThrows
+    //@PreAuthorize("hasAnyRole('Gerente', 'Funcionário')")
     public ResponseEntity<Object> UpdatePassword(@RequestBody @Valid UserDTO userDTO, @PathVariable(value = "id") String id) {
 
         UUID uuid = UUID.fromString(id);
