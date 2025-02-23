@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +39,7 @@ public class ManagerController implements GenericController {
 
     @PostMapping
     @Transactional
+    @PreAuthorize(value = "hasRole('Gerente')")
     public ResponseEntity<Object> saveManager(@RequestBody @Valid ManagerDTO managerDTO) {
 
         log.info("Valores do novo manager : {}", managerDTO);
@@ -70,6 +72,7 @@ public class ManagerController implements GenericController {
 
 
     @GetMapping
+    @PreAuthorize(value = "hasRole('Gerente')")
     public ResponseEntity<Object> findAllManager() {
 
         List<ManagerDTO> managerList = managerMapper.toManagerList(managerService.ManagerList());
@@ -79,6 +82,7 @@ public class ManagerController implements GenericController {
     }
 
     @GetMapping(value = "/{id}")
+    @PreAuthorize(value = "hasRole('Gerente')")
     public ResponseEntity<ManagerDTO> finByIdManger(@PathVariable("id") String id) {
 
         UUID uuid = UUID.fromString(id);
@@ -94,6 +98,7 @@ public class ManagerController implements GenericController {
     }
 
     @PutMapping(value = "/{id}")
+    @PreAuthorize(value = "hasRole('Gerente')")
     public ResponseEntity<Object> Update(@RequestBody ManagerDTO managerDTO,
                                          @PathVariable(value = "id") String id) {
 
@@ -119,6 +124,7 @@ public class ManagerController implements GenericController {
     }
 
     @DeleteMapping(value = "/{id}")
+    @PreAuthorize(value = "hasRole('Gerente')")
     public ResponseEntity<Object> DeleteManager(@PathVariable(value = "id") String id) {
 
         UUID uuid = UUID.fromString(id);

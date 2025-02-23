@@ -25,7 +25,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     @SneakyThrows
-    //@PreAuthorize("hasAnyRole('Gerente', 'Funcionário')")
+    @PreAuthorize("hasAnyRole('Gerente', 'Funcionário')")
     public ResponseEntity<Object> UpdatePassword(@RequestBody @Valid UserDTO userDTO, @PathVariable(value = "id") String id) {
 
         UUID uuid = UUID.fromString(id);
