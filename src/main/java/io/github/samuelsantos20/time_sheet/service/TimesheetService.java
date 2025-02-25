@@ -56,9 +56,9 @@ public class TimesheetService {
         return Optional.ofNullable(timesheetData.findById(id).orElseThrow(() -> new IllegalArgumentException("O valor digitado não foi localizado!")));
     }
 
-    public List<Timesheet> TimesheetList() {
+    public List<Timesheet> TimesheetList(UUID id) {
 
-        return timesheetData.findAll();
+        return timesheetData.findByUserId_Id(id);
 
     }
 

@@ -23,4 +23,9 @@ public interface TimesheetData extends JpaRepository<Timesheet, UUID> {
     List<Timesheet> ListFindByMonthAndUserId(@Param("month") int month,
                                              @Param("year") int year,
                                              @Param("userId") User userId);
+
+    @Query("select t from Timesheet t where t.userId.id = ?1")
+    List<Timesheet> findByUserId_Id(UUID id);
+
+
 }

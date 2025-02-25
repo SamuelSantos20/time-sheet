@@ -24,5 +24,8 @@ public interface WorkEntryData extends JpaRepository<WorkEntry, UUID> {
     @Query(value = "SELECT e.* FROM work_entry e WHERE DATE(e.start_time) = :date AND e.user_id = :userId", nativeQuery = true)
     Optional<WorkEntry> findByEndTime(@Param("date") LocalDate date, @Param("userId") UUID userId);
 
+    @Query("select w from WorkEntry w where w.timesheetId.userId.id = ?1")
+    Optional<WorkEntry> findByTimesheetId_UserId_Id(UUID id);
+
 
 }
