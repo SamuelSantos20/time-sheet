@@ -1,10 +1,20 @@
 package io.github.samuelsantos20.time_sheet.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
-public record ErrorResponse(int status, String message, List<ErrorField> errorFields) {
+@Schema(name = "ErrorResponse")
+public record ErrorResponse(
+        @Schema(name = "status")
+        int status,
+
+        @Schema(name = "message")
+        String message,
+
+        @Schema(name = "errorFields")
+        List<ErrorField> errorFields) {
 
     public static ErrorResponse conflict(String message) {
 

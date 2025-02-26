@@ -2,8 +2,12 @@ package io.github.samuelsantos20.time_sheet.controller;
 
 import io.github.samuelsantos20.time_sheet.dto.AuthenticationRequest;
 import io.github.samuelsantos20.time_sheet.util.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -29,6 +33,14 @@ public class AuthenticationController {
 
 
     @PostMapping
+    @Operation(summary = "Autenticação", description = "Criação do token JWT")
+    @ApiResponses({
+
+            @ApiResponse(responseCode = "200", description = "Token criado com sucesso!"),
+
+            @ApiResponse(responseCode = "404", description ="Usuario não Localizado!" )
+
+    })
     public ResponseEntity<String> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
 
         try {
@@ -39,7 +51,8 @@ public class AuthenticationController {
 
         } catch (BadCredentialsException e) {
 
-            throw new Exception("Usuario ou senha inválidos", e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario ou senha inválidos");
+
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.username());

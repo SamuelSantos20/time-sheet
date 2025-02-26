@@ -10,6 +10,9 @@ import io.github.samuelsantos20.time_sheet.util.PasswordGenerator;
 import io.github.samuelsantos20.time_sheet.util.RegistrationGenerator;
 import io.github.samuelsantos20.time_sheet.model.Role;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +43,12 @@ public class ManagerController implements GenericController {
     @PostMapping
     @Transactional
     @PreAuthorize(value = "hasRole('Gerente')")
+    @Operation(summary = "Cadastrar", description = "Cadastrar novo Manager")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Cadastrado com sucesso."),
+            @ApiResponse(responseCode = "422", description = "Erro  de validação."),
+            @ApiResponse(responseCode = "409", description = "Manager já cadastrado.")
+    })
     public ResponseEntity<Object> saveManager(@RequestBody @Valid ManagerDTO managerDTO) {
 
         log.info("Valores do novo manager : {}", managerDTO);
@@ -73,6 +82,10 @@ public class ManagerController implements GenericController {
 
     @GetMapping
     @PreAuthorize(value = "hasRole('Gerente')")
+    @Operation(summary = "Lista de Managers", description = "Realiza pesquisa de todos Managers")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Sucesso."),
+    })
     public ResponseEntity<Object> findAllManager() {
 
         List<ManagerDTO> managerList = managerMapper.toManagerList(managerService.ManagerList());
@@ -83,6 +96,11 @@ public class ManagerController implements GenericController {
 
     @GetMapping(value = "/{id}")
     @PreAuthorize(value = "hasRole('Gerente')")
+    @Operation(summary = "Obter Detalhes", description = "Retorna os dados do Manager pelo ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Manager encontrado."),
+            @ApiResponse(responseCode = "404", description = "Manager não encontrado."),
+    })
     public ResponseEntity<ManagerDTO> finByIdManger(@PathVariable("id") String id) {
 
         UUID uuid = UUID.fromString(id);
@@ -99,6 +117,12 @@ public class ManagerController implements GenericController {
 
     @PutMapping(value = "/{id}")
     @PreAuthorize(value = "hasRole('Gerente')")
+    @Operation(summary = "Atualizar", description = "Atualiza um Manager existente")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Atualizado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Manager não encontrado."),
+            @ApiResponse(responseCode = "409", description = "Manager já cadastrado.")
+    })
     public ResponseEntity<Object> Update(@RequestBody ManagerDTO managerDTO,
                                          @PathVariable(value = "id") String id) {
 
@@ -125,6 +149,12 @@ public class ManagerController implements GenericController {
 
     @DeleteMapping(value = "/{id}")
     @PreAuthorize(value = "hasRole('Gerente')")
+    @Operation(summary = "Deletar", description = "Deleta um Manager existente")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Deletado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Manager não encontardo."),
+            @ApiResponse(responseCode = "400", description = "Manager possui livro cadastrado.")
+    })
     public ResponseEntity<Object> DeleteManager(@PathVariable(value = "id") String id) {
 
         UUID uuid = UUID.fromString(id);

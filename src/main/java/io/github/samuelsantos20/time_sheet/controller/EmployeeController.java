@@ -10,6 +10,9 @@ import io.github.samuelsantos20.time_sheet.util.PasswordGenerator;
 import io.github.samuelsantos20.time_sheet.util.RegistrationGenerator;
 import io.github.samuelsantos20.time_sheet.model.Role;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +44,12 @@ public class EmployeeController implements GenericController {
     @PostMapping
     @Transactional
     @PreAuthorize(value = "hasRole('Gerente')")
+    @Operation(summary = "Cadastrar", description = "Cadastrar novo Employee")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Cadastrado com sucesso."),
+            @ApiResponse(responseCode = "422", description = "Erro  de validação."),
+            @ApiResponse(responseCode = "409", description = "Employee já cadastrado.")
+    })
     public ResponseEntity<Object> saveEmployee(@RequestBody @Valid EmployeeDTO employeeDTO) {
 
 
@@ -72,6 +81,10 @@ public class EmployeeController implements GenericController {
 
     @GetMapping
     @PreAuthorize("hasRole('Gerente')")
+    @Operation(summary = "Lista de Employees", description = "Realiza pesquisa de todos Employees")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Sucesso."),
+    })
     public ResponseEntity<Object> findAll() {
 
 
@@ -86,6 +99,12 @@ public class EmployeeController implements GenericController {
 
     @PutMapping(value = "/{id}")
     @PreAuthorize("hasRole('Gerente')")
+    @Operation(summary = "Atualizar", description = "Atualiza um Employee existente")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Atualizado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Employee não encontrado."),
+            @ApiResponse(responseCode = "409", description = "Employee já cadastrado.")
+    })
     public ResponseEntity<Object> Update(@RequestBody @Valid EmployeeDTO employeeDTO,
                                          @PathVariable(value = "id") String id) {
 
@@ -112,6 +131,11 @@ public class EmployeeController implements GenericController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('Gerente', 'Funcionário')")
+    @Operation(summary = "Obter Detalhes", description = "Retorna os dados do Employee pelo ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Employee encontrado."),
+            @ApiResponse(responseCode = "404", description = "Employee não encontrado."),
+    })
     public ResponseEntity<EmployeeDTO> findByIdEmployee(@PathVariable("id") String id) {
 
         log.info("Busca do employee com id de : {}", id);
@@ -134,6 +158,12 @@ public class EmployeeController implements GenericController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('Gerente')")
+    @Operation(summary = "Deletar", description = "Deleta um Employee existente")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Deletado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Employee não encontardo."),
+            @ApiResponse(responseCode = "400", description = "Employee possui livro cadastrado.")
+    })
     public ResponseEntity<Object> Delete(@PathVariable("id") String id) {
 
         UUID uuid = UUID.fromString(id);

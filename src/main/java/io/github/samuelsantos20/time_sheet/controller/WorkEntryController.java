@@ -6,6 +6,9 @@ import io.github.samuelsantos20.time_sheet.model.User;
 import io.github.samuelsantos20.time_sheet.model.WorkEntry;
 import io.github.samuelsantos20.time_sheet.service.WorkEntryService;
 import io.github.samuelsantos20.time_sheet.util.EntryAndExitRecord;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +32,13 @@ public class WorkEntryController {
     private final WorkEntryService workEntryService;
 
     @PostMapping(value = "/{userId}/entry")
+    @Operation(summary = "Registrar", description = "Registar a entarda de um Usuario")
+    @ApiResponses({
+
+            @ApiResponse(responseCode = "201", description = "Registrada com sucesso."),
+
+
+    })
     public ResponseEntity<Object> Entry(@PathVariable(value = "userId")String userId) {
 
         System.out.println(userId);
@@ -49,13 +59,18 @@ public class WorkEntryController {
     }
 
     @PostMapping("/{userId}/exit")
+    @Operation(summary = "Registrar", description = "Registar a saida de um Usuario")
+    @ApiResponses({
+
+            @ApiResponse(responseCode = "201", description = "Registrada com sucesso."),
+
+
+    })
     public ResponseEntity<Object> Exit(@PathVariable(value = "userId")String userId) {
 
         System.out.println(userId);
 
         UUID uuidd = UUID.fromString(userId);
-
-//        log.info("Id do usuario: {}", uuidd);
 
         User user = new User();
 

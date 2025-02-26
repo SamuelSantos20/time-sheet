@@ -1,10 +1,14 @@
 package io.github.samuelsantos20.time_sheet.controller;
 
-import io.github.samuelsantos20.time_sheet.dto.TimesheetAlternativeDTO;
+import io.github.samuelsantos20.time_sheet.dto.TimesheetResponseDTO;
 import io.github.samuelsantos20.time_sheet.mapper.TimesheetMapper;
 import io.github.samuelsantos20.time_sheet.service.TimesheetService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,18 +31,21 @@ public class TimesheetController {
     private final TimesheetMapper timesheetMapper;
 
 
-
-
     @GetMapping(value = "/{id}")
     @PreAuthorize("hasRole('Gerente')")
+    @Operation(summary = "Obter Detalhes", description = "Retorna os dados do TimeSheet pelo ID do Usuario")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "TimeSheet encontrado."),
+            @ApiResponse(responseCode = "404", description = "TimeSheet não encontrado."),
+    })
     public ResponseEntity<Object> timesheetList(@PathVariable(value = "id") String id) {
 
         UUID uuid = UUID.fromString(id);
 
 
-        Stream<TimesheetAlternativeDTO> timesheetStream = timesheetService.TimesheetList(uuid).stream().map(timesheets -> {
+        Stream<TimesheetResponseDTO> timesheetStream = timesheetService.TimesheetList(uuid).stream().map(timesheets -> {
 
-            TimesheetAlternativeDTO timesheet = new TimesheetAlternativeDTO(timesheets.getUserId().getRegistration(),
+            TimesheetResponseDTO timesheet = new TimesheetResponseDTO(timesheets.getUserId().getRegistration(),
                     timesheets.getMonth(),
                     timesheets.getYear(),
                     timesheets.getTimeSheetUpdate(),
@@ -46,25 +53,27 @@ public class TimesheetController {
                     timesheets.getTotalHours().toHours());
 
 
-
-
             return timesheet;
 
 
         });
 
-        List<TimesheetAlternativeDTO> timesheetDTOS = timesheetStream.toList();
+        List<TimesheetResponseDTO> timesheetDTOS = timesheetStream.toList();
 
         log.info("Lista de objetos sendo enviados : {}", timesheetDTOS);
 
 
-        return ResponseEntity.ok(timesheetDTOS);
+        if (!timesheetDTOS.isEmpty()) {
 
+            return ResponseEntity.ok(timesheetDTOS);
+
+        } else {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("TimeSheet não localizado a partir do id do usuario!");
+
+        }
 
     }
-
-
-
 
 
 }

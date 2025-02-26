@@ -5,7 +5,7 @@ import io.github.samuelsantos20.time_sheet.data.UserData;
 import io.github.samuelsantos20.time_sheet.dto.ApprovalDTO;
 import io.github.samuelsantos20.time_sheet.dto.ApprovalResponse;
 import io.github.samuelsantos20.time_sheet.dto.ApprovalUserDTO;
-import io.github.samuelsantos20.time_sheet.dto.TimesheetAlternativeDTO;
+import io.github.samuelsantos20.time_sheet.dto.TimesheetResponseDTO;
 import io.github.samuelsantos20.time_sheet.model.Approval;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public abstract class ApprovalMapper {
 
     public abstract ApprovalDTO toDto(Approval approval);
 
-    public abstract ApprovalResponse toDtoResponse (ApprovalUserDTO approvalUserDTO, Approval approval, TimesheetAlternativeDTO timesheetAlternativeDTO);
+    public abstract ApprovalResponse toDtoResponse (ApprovalUserDTO approvalUserDTO, Approval approval, TimesheetResponseDTO timesheetResponseDTO);
 
 
 
