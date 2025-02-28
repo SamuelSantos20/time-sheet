@@ -42,8 +42,9 @@ time-sheet/
 
 ## 🗃️ Diagrama de Classes
 Abaixo está o diagrama de classes representando as principais entidades do sistema:
+![diagram-4617229342373617992](https://github.com/user-attachments/assets/4ae1dcd6-b218-4cae-ba95-fcab1cb8afc0)
 
-![Diagrama de Classes](./class_diagram.png)
+
 
 ## 💡 Como Executar
 1. **💾 Clonar o repositório:**
