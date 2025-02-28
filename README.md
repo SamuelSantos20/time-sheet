@@ -10,7 +10,6 @@ O projeto **Time Sheet** ⏰ é uma aplicação web desenvolvida em **Java com S
 - **JPA/Hibernate** 🏢
 - **PostgreSQL** 📂 (banco principal)
 - **H2 Database** 📓 (banco de testes)
-- **Thymeleaf** 🎨
 - **Docker** 🛠️
 - **OpenAPI (Swagger)** 📄
 
