@@ -14,7 +14,7 @@ O projeto **Time Sheet** ⏰ é uma aplicação web desenvolvida em **Java com S
 - **OpenAPI (Swagger)** 📄
 
 ## ⚙️ Funcionalidades
-- ✅ Cadastro de usuários e autenticação com JWT.
+- ✅ Cadastro de usuários e autenticação com JWT e Basic Auth.
 - 🕒 Registro de horas trabalhadas pelos funcionários.
 - 📍 Aprovação de registros pelos gerentes.
 - 🛡️ Controle de permissões por papel (Role-based access control).
