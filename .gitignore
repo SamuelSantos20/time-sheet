@@ -28,6 +28,8 @@
 
 ./pgadmin-data/*
 
+.env
+
 /target/*
 
 diagram-4617229342373617992.svg

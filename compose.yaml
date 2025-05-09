@@ -5,8 +5,8 @@ services:
     env_file:
       - .env # Variáveis de ambiente externas
     environment:
-      - PGADMIN_DEFAULT_EMAIL=samuelfamilia@gmail.com # Email padrão para login no pgAdmin
-      - PGADMIN_DEFAULT_PASSWORD=admin
+      - PGADMIN_DEFAULT_EMAIL
+      - PGADMIN_DEFAULT_PASSWORD
       - TZ=America/Sao_Paulo # Fuso horário local
     ports:
       - '5059:80' # Porta para acessar o pgAdmin no navegador
