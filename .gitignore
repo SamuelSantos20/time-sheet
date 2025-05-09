@@ -27,6 +27,7 @@
 *.rar
 
 ./pgadmin-data/*
+/pgdata/*
 
 .env
 
