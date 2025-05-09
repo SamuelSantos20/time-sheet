@@ -42,7 +42,6 @@ public class Timesheet {
     private List<WorkEntry> workEntries;
 
     @OneToOne(mappedBy = "timesheet", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "approval", nullable = false)
     private Approval approval;
 
     @Column(name = "timesheet_month")

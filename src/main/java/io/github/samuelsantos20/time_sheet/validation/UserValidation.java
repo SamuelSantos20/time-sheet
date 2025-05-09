@@ -36,7 +36,7 @@ public class UserValidation {
             return byUserId.isPresent();
         }
 
-        return byUserId.stream().anyMatch(user1 -> !user1.equals(user.getRegistration()));
+        return byUserId.stream().anyMatch(user1 -> !user1.getRegistration().equals(user.getRegistration()));
     }
 
 
