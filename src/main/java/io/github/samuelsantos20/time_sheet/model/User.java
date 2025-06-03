@@ -12,6 +12,7 @@ import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -26,7 +27,7 @@ import java.util.UUID;
 @Table(name = "users") // Escape the table name
 @JsonIgnoreProperties({"managers","timesheets","workEntries", "managers","employees"} ) // Ignora a serialização da lista
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class User {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

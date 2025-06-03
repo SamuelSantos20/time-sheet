@@ -1,0 +1,235 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+   background: linear-gradient(135deg, #1c1c1c, #2c2c2c);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x: hidden;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.container {
+    margin-top: 100px;
+    max-width: 900px;
+    width: 100%;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+     background-color: black;
+    color: #fff;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+.comment {
+    width: 100%;
+    min-height: 50px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical; /* Permite redimensionar apenas verticalmente */
+    font-size: 14px;
+}
+
+.comment:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+.comment {
+        font-size: 12px;
+        min-height: 40px;
+    }
+.btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-right: 5px;
+}
+
+.aprovar {
+    background-color: #2F4F7F;
+    color: #fff;
+}
+.aprovar:hover {
+    background-color: #1F3A6B;
+}
+
+.rejeitar {
+    background-color: #6B4E4E;
+    color: #fff;
+}
+.rejeitar:hover {
+    background-color: #4E3535;
+}
+@media (max-width: 600px) {
+    th, td {
+        font-size: 12px;
+        padding: 8px;
+    }
+    .btn {
+        padding: 6px 8px;
+        font-size: 12px;
+    }
+}
+/* Navbar - visual escuro e corporativo */
+.navigation {
+  background-color: rgba(0, 0, 0, 0.6);
+  height: 70px;
+  width: 100%;
+  margin-bottom: 200px;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  backdrop-filter: blur(6px);
+}
+
+.nav-container {
+  max-width: 960px; /* Reduced to match container */
+  margin: 0 auto;
+  padding: 0 10px; /* Reduced padding */
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.brand a {
+  color: #ffffff;
+  font-size: 1.3em; /* Reduced */
+  text-transform: uppercase;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.nav-list {
+  list-style: none;
+  display: flex;
+  gap: 12px; /* Reduced gap */
+}
+
+.nav-list li {
+  position: relative;
+}
+
+.nav-list a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 13px; /* Reduced */
+  padding: 6px 10px; /* Reduced */
+  transition: background 0.3s;
+}
+
+.nav-list a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+/* Dropdown */
+.nav-dropdown {
+  display: none;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.8);
+  top: 100%;
+  left: 0;
+  min-width: 140px; /* Reduced */
+  z-index: 1000;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+}
+
+.nav-dropdown li a {
+  padding: 6px 10px; /* Reduced */
+  display: block;
+  font-size: 12px; /* Reduced */
+}
+
+.nav-list li:hover .nav-dropdown {
+  display: block;
+}
+
+/* Mobile */
+.nav-mobile {
+  display: none;
+}
+
+#nav-toggle {
+  display: none;
+}
+.logo {
+  display: block;
+  max-width: 70px; /* Reduced */
+  height: auto;
+  margin: 10px auto; /* Reduced */
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.4));
+}
+.article {
+ margin-bottom: 200px;
+}
+
+.form-section {
+    margin-top: 20px;
+}
+
+.form-section label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+.form-section input, .form-section textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.custom-alert {
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    cursor: pointer;
+}

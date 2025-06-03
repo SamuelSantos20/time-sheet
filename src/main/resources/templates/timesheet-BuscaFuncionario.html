@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../static/css/timesheet-BuscaFuncionario.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+    <div class="container text-center">
+        <header>
+            <h3>Timesheet Entry</h3>
+        </header>
+        <main>
+            <form>
+                <div class="form-group row">
+                    <div class="col-2"></div>
+                    <label class="sr-only" for="datePicker">Date</label>
+                    <input id="datePicker" type="month" class="form-control mb-2 mr-sm-2 col-4 date" placeholder="week commencing">
+                    <button type="submit" class="but">Search</button>
+                    <div class="col-2"></div>        
+                </div>
+            </form>
+            <div id="alert-container"></div>
+            <table class="table table-dark table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Month</th>
+                        <th>Start Time</th>
+                        <th>Finish Time</th>
+                        <th>Hours Worked</th>
+                    </tr>
+                </thead>
+                <tbody id="tBody"></tbody>
+            </table>
+            <div class="row bottom">
+                
+                <div class="col">
+                    <h2 id="hoursWorkedText" class="text-right">Total Hours Worked: <span id="totalHours">0</span></h2>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../static/js/timesheetBuscaFuncionario.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

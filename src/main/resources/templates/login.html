@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../static/css/login.css">
+</head>
+<body>
+ <div class="login-box">
+      <h2>Login</h2>
+      <form id="login-form" autocomplete="off" onsubmit="event.preventDefault(); logar();">
+        <div class="user-box">
+          <input type="text" name="user_registration" class="username" autocomplete="off" required>
+          <label>Registration</label>
+        </div>
+        <div class="user-box">
+          <input type="password" name="user_passcode" class="password" autocomplete="new-password" required>
+          <label>Password</label>
+        </div>
+        <div class="alert-container mt-3" id="alert-container"></div>
+        <button type="submit" class="btn-sm">Login</button>
+      </form>
+
+
+    </div>
+
+
+    <script>
+      function updateLabels() {
+        document.querySelectorAll('.login-box .user-box input').forEach(input => {
+          if (input.value.trim() !== '') {
+            input.classList.add('filled');
+          } else {
+            input.classList.remove('filled');
+          }
+        });
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        // Correção para autofill (roda várias vezes brevemente após carregar)
+        for (let i = 0; i < 5; i++) {
+          setTimeout(updateLabels, 200 * i);
+        }
+
+        // Atualiza em tempo real conforme o usuário digita
+        document.querySelectorAll('.login-box .user-box input').forEach(input => {
+          input.addEventListener('input', updateLabels);
+        });
+      });
+        
+        
+    </script>
+
+
+
+    <script src="../static/js/nav.js"></script>
+    <script src="../static/js/login.js"></script>
+
+</body>
+</html>

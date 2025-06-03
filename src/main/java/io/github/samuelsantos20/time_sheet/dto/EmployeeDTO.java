@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+import java.io.Serializable;
+
 @Schema(name = "Employee")
 public record EmployeeDTO(
 
@@ -30,5 +32,5 @@ public record EmployeeDTO(
         String department,
 
         User user
-) {
+) implements Serializable {
 }

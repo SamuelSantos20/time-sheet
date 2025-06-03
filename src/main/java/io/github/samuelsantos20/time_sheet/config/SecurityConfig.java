@@ -5,10 +5,12 @@ import io.github.samuelsantos20.time_sheet.security.InMemoryAuthenticationProvid
 import io.github.samuelsantos20.time_sheet.security.JwtRequestFilter;
 import io.github.samuelsantos20.time_sheet.service.MyUserDetailsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,11 +19,15 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -30,41 +36,27 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final InMemoryAuthenticationProvider inMemoryAuthenticationProvider;
-
-    public final CustomAuthenticationProvider customAuthenticationProvider;
-
+    private final CustomAuthenticationProvider customAuthenticationProvider;
     private final JwtRequestFilter jwtRequestFilter;
 
-
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, MyUserDetailsService userDetailsService) throws Exception {
-
-
-        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
-
-                .formLogin(Customizer.withDefaults())
-
-                .authorizeHttpRequests(authorization ->
-                        authorization.requestMatchers("/employee/**").authenticated()
-                                .requestMatchers("/login").permitAll()
-                                .requestMatchers("/manager/**").authenticated()
-                                .requestMatchers("/timesheet/**").authenticated()
-                                .requestMatchers("/workEntry/**").authenticated()
-                                .requestMatchers("/user/**").authenticated()
-                                .requestMatchers("/approval/**").authenticated()
-                                .requestMatchers("/authenticate/**").permitAll()
-                                .anyRequest().authenticated()
-
-                ).userDetailsService(userDetailsService)
-                .httpBasic(Customizer.withDefaults())
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+    SecurityFilterChain securityFilterChain(HttpSecurity http, MyUserDetailsService userDetailsService) throws Exception {
+        return http
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // <- Adiciona aqui
+                .authorizeHttpRequests(authz -> authz
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/login", "/authenticate/**").permitAll()
+                        .requestMatchers("/employee/**", "/manager/**", "/timesheet/**", "/workEntry/**", "/user/**", "/approval/**").authenticated()
+                        .anyRequest().authenticated()
+                )
+                .formLogin(AbstractHttpConfigurer::disable)
+                .userDetailsService(userDetailsService)
+                .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
-
                 .build();
-
     }
-
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -77,32 +69,41 @@ public class SecurityConfig {
         );
     }
 
-
-
-
     @Bean
     public GrantedAuthorityDefaults grantedAuthority() {
-
-        return new GrantedAuthorityDefaults("");
+        return new GrantedAuthorityDefaults(""); // Remove o prefixo "ROLE_"
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-
         return new BCryptPasswordEncoder();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity httpSecurity) throws Exception {
-
         AuthenticationManagerBuilder authenticationManagerBuilder = httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
-
-        authenticationManagerBuilder.inMemoryAuthentication().withUser("master").password("54321").roles("Gerente");
-
+        authenticationManagerBuilder.inMemoryAuthentication()
+                .withUser("master").password(passwordEncoder().encode("54321")).roles("Gerente");
         authenticationManagerBuilder.authenticationProvider(customAuthenticationProvider);
-
         return authenticationManagerBuilder.build();
     }
 
+
+    @Bean
+    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(Arrays.asList("http://localhost:63342", "http://localhost:3000", "http://localhost:61051"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(Arrays.asList("*"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
+
+
+
 }
+

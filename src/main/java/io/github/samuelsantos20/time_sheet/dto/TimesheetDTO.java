@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -47,7 +48,7 @@ public record TimesheetDTO(
         Duration totalHours
 
 
-) {
+) implements Serializable {
 
 
 

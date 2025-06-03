@@ -4,6 +4,8 @@ import io.github.samuelsantos20.time_sheet.data.EmployeeData;
 import io.github.samuelsantos20.time_sheet.model.Employee;
 import io.github.samuelsantos20.time_sheet.validation.EmployeeValidation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,7 @@ public class EmployeeService {
 
     private final EmployeeValidation employeeValidation;
 
+    @CacheEvict(value = "employeeCache", allEntries = true)
     public Employee employeeSave(Employee employee) {
 
         employeeValidation.validation(employee);
@@ -29,6 +32,7 @@ public class EmployeeService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "employeeCache")
     public Optional<Employee> employeeSearch(UUID id) {
 
         return employeeData.findById(id);
@@ -36,6 +40,7 @@ public class EmployeeService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "employeeCache")
     public List<Employee> employeeListString() {
 
         return employeeData.findAll();
@@ -43,7 +48,15 @@ public class EmployeeService {
 
     }
 
+    @Transactional(readOnly = true)
+    @Cacheable(value = "employeeCache")
+    public Optional<Employee> employeeSearchByUserId(UUID userId) {
 
+        return employeeData.findByUserId(userId);
+
+    }
+
+    @CacheEvict(value = "employeeCache", allEntries = true)
     public void employeeUpdate(Employee employee) {
 
         employeeValidation.validation(employee);
@@ -52,6 +65,7 @@ public class EmployeeService {
 
     }
 
+    @CacheEvict(value = "employeeCache", allEntries = true)
     public void employeeDelete(Employee employee) {
 
         employeeData.delete(employee);

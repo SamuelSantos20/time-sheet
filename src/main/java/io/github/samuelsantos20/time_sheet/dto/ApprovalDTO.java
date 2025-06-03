@@ -7,11 +7,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Schema(name = "Approval")
-public record ApprovalDTO(
+public record ApprovalDTO (
 
         @NotNull(message = "É necessario que seja indicado o manager da tarefa!")
         @Schema(name = "idUser")
@@ -31,7 +32,7 @@ public record ApprovalDTO(
 
         @NotBlank(message = "É necessario que haja algun comment!")
         @Schema(name = "comments")
-        String comments) {
+        String comments) implements Serializable{
 
 
 

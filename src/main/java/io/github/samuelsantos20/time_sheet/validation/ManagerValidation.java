@@ -15,35 +15,30 @@ public class ManagerValidation {
 
     private final ManagerData managerData;
 
-    public void validation(Manager manager) {
-
-        if (Objects.isNull(manager)){
-
-            throw new IllegalArgumentException("O valor do objeto enviado é nulo!");
-
+    public void validate(Manager manager) {
+        if (Objects.isNull(manager)) {
+            throw new IllegalArgumentException("O objeto Manager fornecido é nulo.");
         }
 
-        if (exitsManager(manager)){
-
-            throw new DuplicateRecord("Esse Manager já se encontra cadastrado no banco de dados!");
-
+        if (existsManager(manager)) {
+            throw new DuplicateRecord("Esse Manager já está cadastrado no banco de dados.");
         }
-
     }
 
-    private boolean exitsManager(Manager manager) {
+    private boolean existsManager(Manager manager) {
+        Optional<Manager> optionalManager = managerData.findByEmailAndFirstNameAndLastNameAndDepartment(
+                manager.getEmail(),
+                manager.getFirstName(),
+                manager.getLastName(),
+                manager.getDepartment()
+        );
 
-        Optional<Manager> optionalManager = managerData.findByEmailAndFirstNameAndLastNameAndDepartment(manager.getEmail(), manager.getFirstName(), manager.getLastName(), manager.getDepartment());
-
-        if (manager.getManagerId() == null){
-
+        if (manager.getManagerId() == null) {
             return optionalManager.isPresent();
         }
 
-        return optionalManager.stream().map(Manager ::getManagerId).anyMatch( id -> !id.equals(manager.getManagerId()));
-
-
+        return optionalManager
+                .map(existing -> !existing.getManagerId().equals(manager.getManagerId()))
+                .orElse(false);
     }
-
-
 }

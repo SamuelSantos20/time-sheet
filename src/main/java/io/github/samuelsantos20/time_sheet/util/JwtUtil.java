@@ -3,17 +3,11 @@ package io.github.samuelsantos20.time_sheet.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,99 +15,59 @@ import java.util.function.Function;
 
 @Component
 public class JwtUtil {
+    private final String secret;
+    private final long expirationTimeInMillis;
 
-    private final RSAPrivateKey privateKey; // Chave privada RSA
-    private final RSAPublicKey publicKey;   // Chave pública RSA
-
-
-    @Value(value = "${jwt.secret}")
-    private String secret;
-
-    @Value(value = "${jwt.expiration}")
-    private long expiration;
-
-
-    public JwtUtil()  throws NoSuchAlgorithmException {
-
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-
-        keyPairGenerator.initialize(2048);//Tamanho da chave RSA
-
-        KeyPair keyPair = keyPairGenerator.generateKeyPair();
-
-        this.privateKey = (RSAPrivateKey) keyPair.getPrivate();
-
-        this.publicKey = (RSAPublicKey) keyPair.getPublic();
-
-
+    public JwtUtil(@Value("${jwt.secret}") String secret,
+                   @Value("${jwt.expiration}") long expiration) {
+        this.secret = secret;
+        this.expirationTimeInMillis = expiration;
     }
 
-
-    //Gera a chave de assinatura
-    private Key getSigninKey(){
-
-        return Keys.hmacShaKeyFor(secret.getBytes());
+    public String generateToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("sub", userDetails.getUsername());
+        return createToken(claims);
     }
 
-    //Gera o token JWT
-    public String generateToken(UserDetails userDetails){
+    private String createToken(Map<String, Object> claims) {
+        Date now = new Date();
+        Date expiration = new Date(now.getTime() + expirationTimeInMillis);
 
-        Map<String,Object> claims = new HashMap<>();
-
-        return createToken(claims, userDetails.getUsername());
-
-    }
-
-    //Cria o token JWT
-    private String createToken(Map<String, Object> claims, String username) {
-
-        claims.put("sub", username);
-
-        return Jwts.builder().claims(claims)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(privateKey)
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(expiration)
+                .signWith(SignatureAlgorithm.HS256, Base64.getEncoder().encodeToString(secret.getBytes()))
                 .compact();
-
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails){
-
+    public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-
     }
 
-    //Extrai o nome do usuário do token
     public String extractUsername(String token) {
-
         return extractClaim(token, Claims::getSubject);
     }
 
-    //Extrai o tempo de expiração do token
-    public Date extractExpiration(String token){
-
+    private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    //Verifica se o Token é valido
-    private Boolean isTokenExpired(String token){
-
+    private Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
-    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver){
-
-        final Claims claims = extractALLClaims(token);
-
+    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
-
     }
 
-    private Claims extractALLClaims(String token){
-
-        return Jwts.parser().verifyWith(publicKey).build().parseSignedClaims(token).getPayload();
-
+    private Claims extractAllClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(Base64.getEncoder().encodeToString(secret.getBytes()))
+                .parseClaimsJws(token)
+                .getBody();
     }
-
 }

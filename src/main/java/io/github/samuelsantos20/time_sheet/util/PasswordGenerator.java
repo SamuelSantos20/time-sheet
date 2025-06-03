@@ -1,7 +1,7 @@
 package io.github.samuelsantos20.time_sheet.util;
 
 import java.util.Random;
-
+// Valores gerados para User: Matricula: 5892420, Senha: GQqL^3d, Role: EMPLOYEE
 public class PasswordGenerator {
 
     private static final String CARACTERES_PERMITIDOS =

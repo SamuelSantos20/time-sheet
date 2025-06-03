@@ -1,0 +1,250 @@
+@import url('https://fonts.googleapis.com/css?family=Bree+Serif|Quicksand');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1c1c1c, #2c2c2c);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x: hidden;
+  color: #fff;
+}
+
+.container {
+  padding: 20px;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1200px;
+  margin-top: 80px;
+}
+
+.card {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: rgba(0,0,0,.6);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.3);
+  transition: all .2s ease-in-out;
+}
+
+.card:hover {
+  box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+}
+
+.title {
+  font-size: 2.5rem;
+  color: #fff;
+  text-align: center;
+  margin: 30px 0;
+  padding: 0 10px;
+  word-wrap: break-word;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 5px;
+  color: #fff;
+  letter-spacing: 0.5px;
+  font-size: 16px;
+}
+
+input, select {
+  margin-bottom: 15px;
+  padding: 12px;
+  width: 100%;
+  border: 0;
+  border-radius: 4px;
+  background-color: #fff;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+  color: #2C3E50;
+  font-size: 16px;
+  font-family: 'Open Sans', sans-serif;
+}
+
+select {
+  padding: 11px; /* Ajuste para alinhar com inputs */
+  appearance: none; /* Remove o estilo padrão do select */
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="6" viewBox="0 0 12 6"><path d="M0 0l6 6 6-6z" fill="%232C3E50"/></svg>') no-repeat right 12px center;
+  background-color: #fff;
+}
+
+.btn {
+  background-color: #333;
+  padding: 12px;
+  margin: 20px auto 0;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 200px;
+  display: block;
+  text-align: center;
+  border-radius: 4px;
+  transition: all .2s ease-in-out;
+}
+
+.btn:hover {
+  background-color: #444;
+  box-shadow: 0 5px 15px rgba(0,0,0,.3);
+}
+
+.navigation {
+  background-color: rgba(0, 0, 0, 0.6);
+  height: 70px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  backdrop-filter: blur(6px);
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-list {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+}
+
+.nav-list a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 14px;
+  padding: 8px 12px;
+  transition: background 0.3s;
+}
+
+.nav-list a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.nav-dropdown {
+  display: none;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.8);
+  top: 100%;
+  left: 0;
+  min-width: 160px;
+  z-index: 1000;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+}
+
+.nav-list li:hover .nav-dropdown {
+  display: block;
+}
+
+.footer {
+  text-align: center;
+  padding: 20px;
+  background-color: rgba(0,0,0,.8);
+  margin-top: 40px;
+  font-size: 14px;
+}
+
+.footer p {
+  margin: 5px 0;
+}
+
+.footer a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 5px;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+.custom-alert {
+  background-color: #f44336;
+  color: white;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 5px;
+  position: relative;
+}
+
+.custom-alert.alert-success {
+  background-color: #4CAF50;
+}
+
+.custom-alert.alert-danger {
+  background-color: #f44336;
+}
+
+.custom-alert .close-btn {
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .nav-list {
+    display: none;
+    flex-direction: column;
+    background-color: rgba(0,0,0,0.95);
+    position: absolute;
+    top: 70px;
+    right: 0;
+    width: 100%;
+    padding: 10px 0;
+  }
+
+  .nav-mobile {
+    display: block;
+    cursor: pointer;
+  }
+
+  #nav-toggle {
+    display: block;
+    position: absolute;
+    right: 15px;
+    top: 25px;
+  }
+}
+.logo {
+  display: block;
+  max-width: 70px; /* Reduced */
+  height: auto;
+  margin: 10px auto; /* Reduced */
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.4));
+}

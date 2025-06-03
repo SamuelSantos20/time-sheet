@@ -3,6 +3,7 @@ package io.github.samuelsantos20.time_sheet.controller;
 import io.github.samuelsantos20.time_sheet.dto.TimesheetResponseDTO;
 import io.github.samuelsantos20.time_sheet.mapper.TimesheetMapper;
 import io.github.samuelsantos20.time_sheet.service.TimesheetService;
+import io.github.samuelsantos20.time_sheet.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -30,6 +31,7 @@ public class TimesheetController {
 
     private final TimesheetMapper timesheetMapper;
 
+    private final UserService userService;
 
     @GetMapping(value = "/{id}")
     @PreAuthorize("hasRole('Gerente')")
@@ -46,6 +48,7 @@ public class TimesheetController {
         Stream<TimesheetResponseDTO> timesheetStream = timesheetService.TimesheetList(uuid).stream().map(timesheets -> {
 
             TimesheetResponseDTO timesheet = new TimesheetResponseDTO(timesheets.getUserId().getRegistration(),
+                    timesheets.getDayInMonth(),
                     timesheets.getMonth(),
                     timesheets.getYear(),
                     timesheets.getTimeSheetUpdate(),
@@ -75,5 +78,36 @@ public class TimesheetController {
 
     }
 
+   /* @GetMapping(value = "/{registration}/month/{month}/year/{year}")
+    public ResponseEntity<Object> objectTimesheetEntity(@PathVariable(value = "id") String registration,
+                                                        @PathVariable(value = "month") String month,
+                                                        @PathVariable(value = "year") String year) {
 
+        Optional<User> byRegistration = userService.findByRegistration(registration);
+        if (byRegistration.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        User user = byRegistration.get();
+
+
+        UUID uuid = UUID.fromString(user.getId().toString());
+
+        Stream<Object> timesheetStream = timesheetService.TimesheetList(uuid).stream().map(timesheets -> {
+
+            TimesheetResponseDTO timesheet = new TimesheetResponseDTO(timesheets.getUserId().getRegistration(),
+                    timesheets.getDayInMonth(),
+                    timesheets.getMonth(),
+                    timesheets.getYear(),
+                    timesheets.getTimeSheetUpdate(),
+                    timesheets.getTimeSheetCreated(),
+                    timesheets.getTotalHours().toHours());
+
+            return timesheet;
+        });
+
+        return ResponseEntity.status(HttpStatus.OK).body(timesheetStream);
+
+
+
+    }*/
 }

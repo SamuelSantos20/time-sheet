@@ -30,7 +30,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RequestMapping(value = "/employee")
 @Slf4j
-public class EmployeeController implements GenericController {
+public class
+
+
+
+
+EmployeeController implements GenericController {
 
     private final EmployeeService employeeService;
 

@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -18,7 +19,7 @@ import java.util.UUID;
 @Table(name = "approval")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "approvalId")
-public class Approval {
+public class Approval implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "approval_id")

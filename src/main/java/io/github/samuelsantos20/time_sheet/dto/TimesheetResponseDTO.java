@@ -3,6 +3,7 @@ package io.github.samuelsantos20.time_sheet.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Schema(name = "TimesheetResponseDTO")
@@ -11,6 +12,10 @@ public record TimesheetResponseDTO(
         @NotNull(message = "O campo userId é null!")
         @Schema(name = "registration_user")
         String registration_user,
+
+        @NotNull(message = "O campo day é null!")
+        @Schema(name = "day")
+        int day,
 
         @NotNull(message = "O campo month é null!")
         @Schema(name = "month")
@@ -28,6 +33,6 @@ public record TimesheetResponseDTO(
         long totalHours
 
 
-) {
+)implements Serializable {
 
 }

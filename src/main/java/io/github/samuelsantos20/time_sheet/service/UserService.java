@@ -5,6 +5,8 @@ import io.github.samuelsantos20.time_sheet.model.Manager;
 import io.github.samuelsantos20.time_sheet.model.User;
 import io.github.samuelsantos20.time_sheet.validation.UserValidation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,8 +25,7 @@ public class UserService {
 
     private final UserValidation userValidation;
 
-    //private final PasswordEncoder passwordEncoder;
-
+    @CacheEvict(value = "userCache", allEntries = true)
     public User saveUser(User user) {
 
         userValidation.validation(user);
@@ -39,6 +40,8 @@ public class UserService {
 
     }
 
+
+    @CacheEvict(value = "userCache", allEntries = true)
     public void Update(User user) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
@@ -50,6 +53,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "userCache")
     public List<User> userList() {
 
         return userData.findAll();
@@ -57,12 +61,14 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "userCache")
     public Optional<User> findByUserId(UUID id) {
 
         return userData.findById(id);
 
     }
 
+    @CacheEvict(value = "userCache", allEntries = true)
     public void DeleteUser(User user) {
 
         userData.delete(user);
@@ -70,6 +76,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "userCache")
     public Optional<User> findByManagers_User(User user) {
 
         return userData.findByManagers_User(user);
@@ -77,10 +84,28 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "userCache")
     public Optional<User> findByRegistration(String registration) {
 
         return userData.findByRegistration(registration);
 
     }
+
+    @Transactional(readOnly = true)
+    @Cacheable(value = "userCache")
+    public Optional<User> findByRegistrationAndPassword(String registration, String password) {
+
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
+        Optional<User> byRegistration = findByRegistration(registration);
+        if (bCryptPasswordEncoder.matches(password, byRegistration.get().getPassword())) {
+            password = byRegistration.get().getPassword();
+        }
+
+
+        return userData.findByRegistrationAndPassword(registration, password);
+
+    }
+
 
 }

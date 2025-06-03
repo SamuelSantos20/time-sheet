@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -31,37 +34,29 @@ public class AuthenticationController {
 
     private final UserDetailsService userDetailsService;
 
-
     @PostMapping
     @Operation(summary = "Autenticação", description = "Criação do token JWT")
     @ApiResponses({
-
             @ApiResponse(responseCode = "200", description = "Token criado com sucesso!"),
-
-            @ApiResponse(responseCode = "404", description ="Usuario não Localizado!" )
-
+            @ApiResponse(responseCode = "404", description = "Usuário não localizado!")
     })
-    public ResponseEntity<String> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+    public ResponseEntity<Map<String, String>> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
+        log.info("username: {}", authenticationRequest.username());
 
         try {
-
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.username(),
-                    authenticationRequest.password()));
-
-
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authenticationRequest.username(), authenticationRequest.password())
+            );
         } catch (BadCredentialsException e) {
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario ou senha inválidos");
-
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Usuário ou senha inválidos"));
         }
 
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.username());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.username());
+        String jwt = jwtUtil.generateToken(userDetails);
 
-        final String jwt = jwtUtil.generateToken(userDetails);
+        log.info("Token JWT gerado");
 
-        log.info("Token JWT : {}", jwt);
-
-        return ResponseEntity.ok(jwt);
+        return ResponseEntity.ok(Map.of("token", jwt));
     }
 
 

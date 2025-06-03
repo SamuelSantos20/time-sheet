@@ -1,25 +1,31 @@
 package io.github.samuelsantos20.time_sheet.controller;
 
-import io.github.samuelsantos20.time_sheet.dto.WorkEntryDTO;
-import io.github.samuelsantos20.time_sheet.mapper.WorkEntryMapper;
+import io.github.samuelsantos20.time_sheet.exception.OperationNotPermitted;
+import io.github.samuelsantos20.time_sheet.mapper.UserMapper;
 import io.github.samuelsantos20.time_sheet.model.User;
 import io.github.samuelsantos20.time_sheet.model.WorkEntry;
+import io.github.samuelsantos20.time_sheet.security.UserPrincipal;
+import io.github.samuelsantos20.time_sheet.service.UserService;
 import io.github.samuelsantos20.time_sheet.service.WorkEntryService;
-import io.github.samuelsantos20.time_sheet.util.EntryAndExitRecord;
+import io.github.samuelsantos20.time_sheet.validation.StartExitValidation;
+import io.github.samuelsantos20.time_sheet.validation.WorEntryValidation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.UUID;
+import java.time.Duration;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/workEntry")
@@ -27,79 +33,214 @@ import java.util.UUID;
 @Slf4j
 public class WorkEntryController {
 
-    private final EntryAndExitRecord entryAndExitRecord;
+    private final WorEntryValidation worEntryValidation;
 
     private final WorkEntryService workEntryService;
 
-    @PostMapping(value = "/{userId}/entry")
-    @Operation(summary = "Registrar", description = "Registar a entarda de um Usuario")
+    private final UserMapper userMapper;
+
+    private final StartExitValidation validateWorkEntryAndExit;
+
+    private final UserService userService;
+
+    @PostMapping(value = "/entry")
+    @Operation(summary = "Registrar", description = "Registrar a entrada de um Usuario")
     @ApiResponses({
-
-            @ApiResponse(responseCode = "201", description = "Registrada com sucesso."),
-
-
+            @ApiResponse(responseCode = "201", description = "Registrada com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Entrada já registrada hoje"),
+            @ApiResponse(responseCode = "401", description = "Acesso negado"),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado"),
+            @ApiResponse(responseCode = "409", description = "Entrada e Saída já registrada!")
     })
-    public ResponseEntity<Object> Entry(@PathVariable(value = "userId")String userId) {
+    public ResponseEntity<Object> entry() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        System.out.println(userId);
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário não autenticado");
+        }
 
-        UUID id = UUID.fromString(userId);
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        User user = userPrincipal.getUser();
 
-        log.info("Id do usuario: {}", id);
+        log.info("Processando entrada do usuário: {}", user.getRegistration());
 
-        User user = new User();
+        try {
+            WorkEntry entry = new WorkEntry();
+            entry.setUserId(user);
+            validateWorkEntryAndExit.validateWorkEntryAndExit(entry);
+            workEntryService.workEntrySaveEntry(entry);
 
-        user.setId(id);
-
-
-        entryAndExitRecord.Entry(user.getId());
-
-        return ResponseEntity.ok().build();
-
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (OperationNotPermitted e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
-    @PostMapping("/{userId}/exit")
-    @Operation(summary = "Registrar", description = "Registar a saida de um Usuario")
+
+
+    @PostMapping("/exit")
+    @Operation(summary = "Registrar", description = "Registrar a saída de um Usuário")
     @ApiResponses({
-
             @ApiResponse(responseCode = "201", description = "Registrada com sucesso."),
-
-
+            @ApiResponse(responseCode = "401", description = "Usuário não autenticado."),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado.")
     })
-    public ResponseEntity<Object> Exit(@PathVariable(value = "userId")String userId) {
+    public ResponseEntity<Map<String, String>> exit() {
+        // Verificar autenticação
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(createErrorResponse("Usuário não autenticado"));
+        }
 
-        System.out.println(userId);
+        // Obter o usuário autenticado
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        if (userPrincipal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(createErrorResponse("Usuário não autenticado"));
+        }
 
-        UUID uuidd = UUID.fromString(userId);
+        String username = userPrincipal.getUsername();
+        log.info("Registrando saída para o usuário: {}", username);
 
-        User user = new User();
+        // Buscar o usuário no banco de dados
+        Optional<User> byRegistration = userService.findByRegistration(username);
+        if (byRegistration.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado");
+        }
 
-        user.setId(uuidd);
+        User user = byRegistration.get();
+
+        // Criar e salvar a saída (WorkEntry)
+        WorkEntry exit = new WorkEntry();
+        exit.setUserId(user);
+        workEntryService.workEntrySaveExit(exit);
+
+        // Retornar resposta com status 201 e corpo JSON
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Saída registrada com sucesso");
+        response.put("username", username);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    // Método auxiliar para criar respostas de erro em formato JSON
+    private Map<String, String> createErrorResponse(String message) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", message);
+        return errorResponse;
+    }
+
+    //2461282
+    @GetMapping(value = "/{registration}/month/{month}/year/{year}")
+    @PreAuthorize("hasAnyRole('Gerente', 'Funcionário')")
+    public ResponseEntity<Object> objectTimesheetEntity(@PathVariable(value = "registration") String registration,
+                                                        @PathVariable(value = "month") String month,
+                                                        @PathVariable(value = "year") String year) {
+
+        log.info("Registro recebido: {}", registration);
+        log.info("Mês recebido: {}", month);
+        log.info("Ano recebido: {}", year);
+
+        Optional<User> byRegistration = userService.findByRegistration(registration);
+        if (byRegistration.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        User user = byRegistration.get();
+
+        UUID uuid = UUID.fromString(user.getId().toString());
+
+        List<Object> objectStream = workEntryService.findByUserIdAndMonthAndYear(uuid, Integer.parseInt(month), Integer.parseInt(year)).stream().map(workEntry -> {
+
+            log.info("WorkEntry: {}", workEntry);
+
+            Map<String, Object> objectMap = new HashMap<>();
 
 
-        entryAndExitRecord.Exit(user.getId());
+            objectMap.put("day", workEntry.getStartTime().getDayOfMonth());
+            objectMap.put("month", workEntry.getStartTime().getMonthValue());
+            objectMap.put("year", workEntry.getStartTime().getYear());
+            objectMap.put("startTime", workEntry.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+            if (workEntry.getEndTime() != null) {
+                objectMap.put("endTime", workEntry.getEndTime().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+            }
+            if (workEntry.getEndTime() != null && workEntry.getStartTime() != null) {
 
-        return ResponseEntity.ok().build();
+
+                Duration duration = Duration.between(workEntry.getStartTime(), workEntry.getEndTime());
+                long totalMinutos = duration.toMinutes();
+                String tempoFormatado = String.format("%02d:%02d", totalMinutos / 60, totalMinutos % 60);
+                log.info("Tempo formatado: {}", tempoFormatado);
+                objectMap.put("hoursWorked", tempoFormatado);
+
+            }
+
+            log.info("ObjectMap: {}", objectMap);
+
+            return objectMap;
+
+        }).collect(Collectors.toList());
+
+
+        return ResponseEntity.status(HttpStatus.OK).body(objectStream);
+
 
     }
 
-    @GetMapping
-    public ResponseEntity<Object> WorkEntryList() {
+    @GetMapping(value = "/month/{month}/year/{year}")
+    @PreAuthorize("hasAnyRole('Gerente', 'Funcionário')")
+    public ResponseEntity<Object> BuscaPorData(@PathVariable(value = "month") String month,
+                                               @PathVariable(value = "year") String year) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        log.info("Registro recebido: {}", userPrincipal.getUsername());
+        log.info("Mês recebido: {}", month);
+        log.info("Ano recebido: {}", year);
 
-        List<WorkEntryDTO> list = workEntryService.workEntryList().stream().map(workEntry -> new WorkEntryDTO(
-                workEntry.getTimesheetId().getTimesheetId(),
-                workEntry.getUserId().getRegistration(),
-                workEntry.getStartTime(),
-                workEntry.getEndTime(),
-                workEntry.getDateCreated(),
-                workEntry.getDateUpdate())).toList();
+        Optional<User> byRegistration = userService.findByRegistration(userPrincipal.getUsername());
+        if (byRegistration.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        User user = byRegistration.get();
 
-        return ResponseEntity.ok(list);
+        UUID uuid = UUID.fromString(user.getId().toString());
+
+        List<Object> objectStream = workEntryService.findByUserIdAndMonthAndYear(uuid, Integer.parseInt(month), Integer.parseInt(year)).stream().map(workEntry -> {
+
+            log.info("WorkEntry: {}", workEntry);
+
+            Map<String, Object> objectMap = new HashMap<>();
+
+
+            objectMap.put("day", workEntry.getStartTime().getDayOfMonth());
+            objectMap.put("month", workEntry.getStartTime().getMonthValue());
+            objectMap.put("year", workEntry.getStartTime().getYear());
+            objectMap.put("startTime", workEntry.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+            if (workEntry.getEndTime() != null) {
+                objectMap.put("endTime", workEntry.getEndTime().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+            }
+            if (workEntry.getEndTime() != null && workEntry.getStartTime() != null) {
+
+
+                Duration duration = Duration.between(workEntry.getStartTime(), workEntry.getEndTime());
+                long totalMinutos = duration.toMinutes();
+                String tempoFormatado = String.format("%02d:%02d", totalMinutos / 60, totalMinutos % 60);
+                log.info("Tempo formatado: {}", tempoFormatado);
+                objectMap.put("hoursWorked", tempoFormatado);
+
+            }
+
+            log.info("ObjectMap: {}", objectMap);
+
+            return objectMap;
+
+        }).collect(Collectors.toList());
+
+
+        return ResponseEntity.status(HttpStatus.OK).body(objectStream);
 
 
     }
-
-
-
 
 }

@@ -6,6 +6,8 @@ import io.github.samuelsantos20.time_sheet.validation.ManagerValidation;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.coyote.BadRequestException;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,9 +24,10 @@ public class ManagerService {
 
     private final ManagerValidation managerValidation;
 
+    @CacheEvict(value = "managerCache", allEntries = true)
     public Manager managerSave(Manager manager) {
 
-       // managerValidation.validation(manager);
+        managerValidation.validate(manager);
 
         return managerData.save(manager);
 
@@ -32,6 +35,7 @@ public class ManagerService {
 
     @SneakyThrows //O uso dessa anotação exclui a necessidade de anotar o método com Throw
     @Transactional(readOnly = true)
+    @Cacheable(value = "managerCache")
     public Optional<Manager> ManagerUniqueResearch(UUID id) {
 
         return Optional.ofNullable(managerData.findById(id).orElseThrow(() -> new BadRequestException("Manager não localizado!")));
@@ -43,9 +47,11 @@ public class ManagerService {
         return managerData.findAll();
     }
 
+
+    @CacheEvict(value = "managerCache", allEntries = true)
     public void managerUpdate(Manager manager) {
 
-        managerValidation.validation(manager);
+        managerValidation.validate(manager);
 
         managerData.save(manager);
 
@@ -53,6 +59,7 @@ public class ManagerService {
     }
 
 
+    @CacheEvict(value = "managerCache", allEntries = true)
     public void managerDelete(Manager manager) {
 
         managerData.delete(manager);

@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Table(name = "employee")
 @EntityListeners(AuditingEntityListener.class)
-public class Employee {
+public class Employee implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "employee_id")

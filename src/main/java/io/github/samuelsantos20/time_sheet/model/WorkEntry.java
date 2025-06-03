@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Table(name = "work_entry")
 @EntityListeners(AuditingEntityListener.class)
-public class WorkEntry {
+public class WorkEntry implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -63,6 +64,13 @@ public class WorkEntry {
     public final int hashCode() {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
+
+
+    @Override
+    public String toString() {
+        return "WorkEntry{id=" + workEntryId + ", user=" + userId + ", start=" + startTime + ", end=" + endTime + "}";
+    }
+
 }
 
 

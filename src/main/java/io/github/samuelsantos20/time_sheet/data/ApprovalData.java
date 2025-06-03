@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,4 +19,7 @@ public interface ApprovalData extends JpaRepository<Approval, UUID> {
             "WHERE u.id = ?1 AND a.timesheet.timesheetId = ?2")
     Optional<Approval> findByUser_IdAndTimesheet_TimesheetId(UUID id, UUID timesheetId);
 
+    @Query("SELECT a FROM Approval a " +
+            "JOIN FETCH a.user u ")
+    Optional<Approval> findByUser_Id(UUID id);
 }
